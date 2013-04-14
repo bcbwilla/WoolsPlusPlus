@@ -21,7 +21,6 @@ class Plot:
         fig = plt.figure()
         fig.set_size_inches(6,3)
         ax = fig.add_subplot(111) 
-
         
         # for some reason plot_date is not auto generating new colors for each new function 
         l_c = ['b', 'g', 'r', 'c', 'm', 'y']
