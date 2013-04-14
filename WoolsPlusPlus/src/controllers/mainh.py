@@ -20,12 +20,11 @@ class MainPage(webapp2.RequestHandler):
         template = JINJA_ENVIRONMENT.get_template('index.html')
         self.response.write(template.render(template_values))
     
-    def get(self):       
-#        initialize_players()        
+    def get(self):             
         self.render_page()
 
     def post(self):
-        player_name = cgi.escape(self.request.get('content'))
+        player_name = cgi.escape(self.request.get('content')).strip()
 
         if player_name == '':
             self.render_page() 
@@ -53,11 +52,3 @@ def add_player(player_name):
         return True
     else:
         return False
-           
-def initialize_players():
-    #create initial player object. for debugging only
-    player_list = ["bcbwilla", "ieatboulders2", "HxRxK", "wadeflash03"]
-    
-    for p_name in player_list:
-        p_name = p_name.lower()  
-        Player().get_or_insert(p_name, name=p_name)
