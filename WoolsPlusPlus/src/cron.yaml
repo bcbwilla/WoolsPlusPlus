@@ -1,0 +1,4 @@
+cron:
+- description: Update user stats
+  url: /crons/updatestats
+  schedule: every 30 minutes
