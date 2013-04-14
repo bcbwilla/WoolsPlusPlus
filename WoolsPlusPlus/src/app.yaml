@@ -25,3 +25,6 @@ libraries:
   version: "latest"
 - name: matplotlib
   version: "latest"
+  
+inbound_services:
+- warmup
