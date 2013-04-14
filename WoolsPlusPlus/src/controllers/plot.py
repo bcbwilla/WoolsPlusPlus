@@ -58,11 +58,11 @@ class Plot:
         if g is None:
             Graph().get_or_insert(filename,user=user, filename=filename, image=image)
         else:
-            update_graph(g, image)
+            self.__update_graph(g, image)
 
-        
-@db.transactional
-def update_graph(graph, image):
-    """updates a user's graph"""
-    graph.image = image
-    graph.put()
+
+    @db.transactional
+    def __update_graph(self, graph, image):
+        """updates a user's graph"""
+        graph.image = image
+        graph.put()
