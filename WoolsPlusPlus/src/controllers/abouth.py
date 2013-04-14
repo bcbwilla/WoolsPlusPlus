@@ -1,10 +1,10 @@
+"""
+renders the 'about' page
+"""
+
 import webapp2
 import jinja2
 import os
-
-from google.appengine.ext import db
-
-from models.models import Player
 
 
 JINJA_ENVIRONMENT = jinja2.Environment(

@@ -1,12 +1,20 @@
+"""
+datastore models
+"""
+
 import datetime
 from google.appengine.ext import db
 
+
 class Graph(db.Model):
+    """Represents a player's graph"""
     user = db.StringProperty(default=None)  
     filename = db.StringProperty(default=None)
     image = db.BlobProperty(default=None)
     
+    
 class Player(db.Model):
+    """Represents a player"""
     name = db.StringProperty()
     rolling = db.IntegerProperty()
     dates = db.ListProperty(datetime.datetime)

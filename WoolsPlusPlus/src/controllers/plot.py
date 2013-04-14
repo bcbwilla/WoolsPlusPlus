@@ -1,3 +1,7 @@
+"""
+produces plots
+"""
+
 import cStringIO
 
 from google.appengine.ext import db
@@ -8,14 +12,14 @@ from models.models import Graph
 
 
 class Plot:
-    def __init__(self, player, stats=('kd','kd'), ylabel='', title='', rolling=14):
+    def __init__(self, player, stats, ylabel='', title='', rolling=14):
         self.player = player
         p = self.player
         self.filename = p.name+'_'
         
         dates = mpl.dates.date2num(p.dates)    
         fig = plt.figure()
-        fig.set_size_inches(6.5,3.5)
+        fig.set_size_inches(6,3)
         ax = fig.add_subplot(111) 
 
         
@@ -42,8 +46,10 @@ class Plot:
         sio = cStringIO.StringIO()
         plt.savefig(sio, format="png", dpi=100)
         self.data = sio.getvalue()
-    
+
+
     def put(self):
+        """adds or updates a user's graph"""
         user = self.player.name
         filename = self.filename
         image = self.data
@@ -53,8 +59,10 @@ class Plot:
             Graph().get_or_insert(filename,user=user, filename=filename, image=image)
         else:
             update_graph(g, image)
+
         
 @db.transactional
 def update_graph(graph, image):
+    """updates a user's graph"""
     graph.image = image
     graph.put()

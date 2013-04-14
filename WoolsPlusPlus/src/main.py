@@ -1,6 +1,11 @@
-#from google.appengine.ext import webapp2
+"""
+Set all the url handlers to the corresponding urls
+"""
+
 import webapp2
+
 from controllers import crons, profileh, mainh, imageh, allusersh, abouth
+
 
 app = webapp2.WSGIApplication([('/', mainh.MainPage), 
                                ('/crons/updatestats', crons.UpdateStatsHandler),

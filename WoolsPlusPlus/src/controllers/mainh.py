@@ -16,8 +16,6 @@ class MainPage(webapp2.RequestHandler):
     def render_page(self, msg="", p_url="", url_msg=""):
         template_values = {
             'msg': msg,
-            'p_url': p_url,
-            'url_msg': url_msg
         }
         template = JINJA_ENVIRONMENT.get_template('index.html')
         self.response.write(template.render(template_values))

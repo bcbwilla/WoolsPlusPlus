@@ -1,3 +1,7 @@
+"""
+contains the cron job that collects data from oc.tc
+"""
+
 import webapp2
 import datetime
 
@@ -6,19 +10,22 @@ import pAProfileScraper as pap
 
 from models.models import Player
 from config import config
-#from plot import Plot
+from plot import Plot
 
 
 class UpdateStatsHandler(webapp2.RequestHandler):
+    """Updates all player's stats and makes data plots"""
     
     def get(self):        
         q = Player().all()
         if q != None:
             for player in q:
                 url = config.base_url + str(player.name)
+                # get stats
                 p_stats = pap.PAProfileScraper(url, kills=True, deaths=True, objectives=True)
                 
-                if p_stats.deaths != 0:
+                # explicitly compute KD so we have it with more decimal places
+                if p_stats.deaths != 0:  
                     kd = float(p_stats.kills)/p_stats.deaths
                 else:
                     kd = float(p_stats.kills)
@@ -26,32 +33,30 @@ class UpdateStatsHandler(webapp2.RequestHandler):
                 #fields to update
                 stats = ['kills', 'deaths', 'cores', 'wools', 'monuments', 'objectives',
                          'cd', 'wd', 'md', 'od']
+                
                 for stat in stats:
                     update_player_value(player, stat, getattr(p_stats, stat))
-                
-                #do KD separately from explicit calculation to get me decimal places
+                # update KD separately from explicit calculation to get more decimal places
                 update_player_value(player, 'kd', kd)
                 update_player_value(player, 'dates', datetime.datetime.now())
                 update_rolling_stats(player)
-                
-                
-                
+                             
                 # Make some graphs
-#                pplot = Plot(player, stats=[('kd','KD'),('rkd', 'RKD ('+str(player.rolling)+' days)')])
-#                pplot.put()
-#                pplot = Plot(player, stats=[('rod','ROD ('+str(player.rolling)+' days)')])
-#                pplot.put()
-#                pplot = Plot(player, stats=[('wd','WD'),('cd', "CD"),('md','MD')])
-#                pplot.put()
-#                pplot = Plot(player, stats=[('kd','KD')])
-#                pplot.put()
+                pplot = Plot(player, stats=[('kd','KD'),('rkd', 'RKD ('+str(player.rolling)+' days)')])
+                pplot.put()
+                pplot = Plot(player, stats=[('rod','ROD ('+str(player.rolling)+' days)')])
+                pplot.put()
+                pplot = Plot(player, stats=[('wd','WD'),('cd', "CD"),('md','MD')])
+                pplot.put()
 
 
 @db.transactional
 def update_player_value(player, stat, value):
+    """updates a player's value"""
+    
     values = getattr(player, stat)
-    # see if the user has filled the data list
     values.append(value)
+    # see if the user has filled the data list
     if len(values) > config.max_entries:
         i = len(values) - config.max_entries
         values = values[i:]
@@ -60,7 +65,9 @@ def update_player_value(player, stat, value):
 
 
 @db.transactional
-def update_rolling_stats(player):    
+def update_rolling_stats(player):  
+    """updates a player's rolling stats""" 
+     
     stats_to_compute = [('kills', 'kd'), ('cores', 'cd'), ('wools', 'wd'), 
              ('monuments', 'md'), ('objectives', 'od')] 
     for stat in stats_to_compute:
@@ -82,8 +89,11 @@ def update_rolling_stats(player):
     
         setattr(player, rs_name, values)
         player.put()
-        
-def rolling_stat(stats, deaths, index):         
+
+      
+def rolling_stat(stats, deaths, index):   
+    """computes a player's rolling stat"""
+          
     last_s = stats[-1]
     first_s = stats[index]
     last_d = deaths[-1]
@@ -99,11 +109,17 @@ def rolling_stat(stats, deaths, index):
         return delta_s/delta_d
     else:
         return delta_s
-    
+
+
 def get_rolling(days, dates):
+    """returns the number of stats to use to achieve a rolling interval of a given length
+    
+    days is specified in the config file, and is the number of days to include in a rolling
+    interval.
+    """
+    
     current = dates[-1]
     for i,v in enumerate(reversed(dates)):
-        print i,v, (current - v).days
         if (current - v).days >= days:
             n = days
             i = len(dates) - i - 1
@@ -112,4 +128,3 @@ def get_rolling(days, dates):
             ind = 0
             n = (current - dates[0]).days
     return (ind, n)
-

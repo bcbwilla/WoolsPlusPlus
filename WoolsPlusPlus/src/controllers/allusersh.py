@@ -1,8 +1,10 @@
+"""
+renders the 'all users' page
+"""
+
 import webapp2
 import jinja2
 import os
-
-from google.appengine.ext import db
 
 from models.models import Player
 
@@ -13,7 +15,7 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 class AllUsersHandler(webapp2.RequestHandler):
     
     def get(self):
-        player_list = Player.all()
+        player_list = Player.all()  # get all the players to display
         player_list.order("name")
                
         template_values = {
