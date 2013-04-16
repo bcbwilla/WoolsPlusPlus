@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>wools++ | About</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="../assets/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 20px;
+        padding-bottom: 40px;
+      }
+
+      /* Custom container */
+      .container-narrow {
+        margin: 0 auto;
+        max-width: 700px;
+      }
+      .container-narrow > hr {
+        margin: 30px 0;
+      }
+
+      /* Main marketing message and sign up button */
+      .jumbotron {
+        margin: 60px 0;
+        text-align: center;
+      }
+      .jumbotron h1 {
+        font-size: 72px;
+        line-height: 1;
+      }
+      .jumbotron .btn {
+        font-size: 21px;
+        padding: 14px 24px;
+      }
+
+      /* Supporting marketing content */
+      .marketing {
+        margin: 60px 0;
+      }
+      .marketing p + h4 {
+        margin-top: 28px;
+      }
+    </style>
+    <link href="../assets/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="../assets/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+                    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+                                   <link rel="shortcut icon" href="../assets/ico/favicon.png">
+  </head>
+
+  <body>
+
+    <div class="container-narrow">
+
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="/">Home</a></li>
+          <li><a href="/allusers">Users</a></li>
+          <li class="active"><a href="/about">About</a></li>
+        </ul>
+        <h3 class="muted">wools++</h3>
+      </div>
+
+      <hr>
+
+      <div class="row-fluid marketing">
+        <div class="span12">
+          <h4>About</h4>
+          <p>
+          wools++ is a community-driven and fan-made project.  The part that does stuff is written in 
+          <a href="http://www.python.org/">python</a>, 
+          and it uses <a href="http://jinja.pocoo.org/docs/">jinja2</a> with 
+          <a href="http://twitter.github.io/bootstrap/">bootstrap</a> html/css/javascript templates for displaying.  
+          wools++ uses <a href="http://www.crummy.com/software/BeautifulSoup/">BeautifulSoup</a> to collect data 
+          from users' profiles at <a href="http://www.oc.tc">Project Ares</a> and 
+          <a href="http://matplotlib.org/">matplotlib</a> to produce the graphs. The project is hosted
+          on <a href="https://developers.google.com/appengine/">Google's App Engine</a>.  All of the source code
+          can be found <a href="https://github.com/bcbwilla/WoolsPlusPlus">here</a>.
+          <p>The project is currently in its alpha stages, so it will still be some time before I get things straightened
+          	out.  This means I may have to clear the data every once in a while.  Sorry about that!</p> 
+          <br>
+          <div align="right">-<a href="http://www.oc.tc/bcbwilla">Ben</a></div>
+          </p>
+          <hr>
+          <p>
+          	<h4>FAQ</h4>
+          	<dl>
+          		<dt>My stats aren't updating!</dt>
+          		<dd>wools++ only collects data a couple times per day.  This is to limit requests made to Project Ares' 
+          			website, as well as to limit the work that the app has to do.  The frequency at which data is collected
+          			may change in the future.  Remember, wools++
+          			is more about "long term" stats than up-to-the-second ones.  </dd>
+          	</dl>
+          	<dl>
+          		<dt>My stats aren't accurate / I found an arbitrary problem!</dt>
+          		<dd>Please report all problems in the official wools++ thread on Project Ares' Forum. <em>(No thread yet)</em> </dd>
+          	</dl>
+          	<dl>
+          		<dt>The graphs aren't really that interesting.</dt>
+          		<dd>Give it time!  You won't see much at first.  Play for a few weeks and it should get better.</dd>
+          	</dl>
+            <dl>
+          		<dt>Can I put one of these graphs on my Project Ares profile?</dt>
+          		<dd>Yes!  That's mostly the point of this app - to generate graphs for your own profile on Project Ares!</dd>
+          	</dl>
+          	<dl>
+          		<dt>What's a rolling stat?</dt>
+          		<dd>A rolling stat is a stat that is computed with only a given amount of recent data.  For example, a 2 day
+          			rolling KD would be computed as (kills earned in the last 2 days) / (deaths earned in the last 2 days).  As of
+          			now, wools++ computes rolling stats based on the last 7 days of playing time (if you haven't
+          			been in the system for 7 days, it's calculated from the day you first joined).  This time period is 
+          			totally arbitrary, but it seems to be okay.  One of the advantages of a rolling stat is that it gives a player
+          			feedback much <a href="http://www.electronexchange.net/2013/03/video-game-math-kd-ratio-lag/">more quickly</a> 
+          			than a standard statistic that includes <em>everything</em>, such as (all kills)/(all deaths).
+          			More info <a href="http://en.wikipedia.org/wiki/Moving_average">here</a>. </dd>
+          	</dl>
+          	<dl>
+          		<dt>What's a "RWD"?</dt>
+          		<dd>Common abbreviations used:
+          			<ul>
+          				<li>K=Kills</li>
+          				<li>D=Deaths</li>
+          				<li>C=Cores</li>
+          				<li>W=Wools</li>
+          				<li>M=Monuments</li>
+          				<li>O=Objectives</li>
+          				<li>S=Scoreboxes (just kidding!)</li>
+          				<li>R=Rolling</li>
+          			</ul>
+          			Most stats are computed as something/deaths.  So, KD would be kills/deaths.  "RWD" means "rolling wools deaths"
+          			or (wools gotten in the past 14 days)/(deaths in the past 14 days)
+          			</dd>
+          	</dl>
+          </p>
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="footer">
+      	<ul class="nav nav-pills pull-right">
+      		<li><a href="https://github.com/bcbwilla/WoolsPlusPlus">Source</a></li>
+          <li><a href="http://www.oc.tc">Official Project Ares</a></li>
+        </ul>
+        <p>&copy; <a href="http://www.electronexchange.net">ee</a> 2013</p>
+      </div>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../assets/js/jquery.js"></script>
+    <script src="../assets/js/bootstrap-transition.js"></script>
+    <script src="../assets/js/bootstrap-alert.js"></script>
+    <script src="../assets/js/bootstrap-modal.js"></script>
+    <script src="../assets/js/bootstrap-dropdown.js"></script>
+    <script src="../assets/js/bootstrap-scrollspy.js"></script>
+    <script src="../assets/js/bootstrap-tab.js"></script>
+    <script src="../assets/js/bootstrap-tooltip.js"></script>
+    <script src="../assets/js/bootstrap-popover.js"></script>
+    <script src="../assets/js/bootstrap-button.js"></script>
+    <script src="../assets/js/bootstrap-collapse.js"></script>
+    <script src="../assets/js/bootstrap-carousel.js"></script>
+    <script src="../assets/js/bootstrap-typeahead.js"></script>
+
+  </body>
+</html>
