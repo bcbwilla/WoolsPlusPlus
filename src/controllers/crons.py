@@ -42,9 +42,7 @@ class UpdateStatsHandler(webapp2.RequestHandler):
                 self.__update_rolling_stats(player)
                              
                 # Make some graphs
-                pplot = Plot(player, stats=[('kd','KD'),('rkd', 'RKD ('+str(player.rolling)+' days)')])
-                pplot.put()
-                pplot = Plot(player, stats=[('rod','ROD ('+str(player.rolling)+' days)')])
+                pplot = Plot(player, stats=[('kd','KD')])
                 pplot.put()
                 pplot = Plot(player, stats=[('wd','WD'),('cd', "CD"),('md','MD')])
                 pplot.put()
@@ -68,18 +66,39 @@ class UpdateStatsHandler(webapp2.RequestHandler):
     def __update_rolling_stats(self, player):  
         """updates a player's rolling stats""" 
          
+         
+        # get index for start date of rolling stat
+        rolling = self.__get_rolling(config.n_days, player.dates)
+       
+        # rolling stat/deaths 
         stats_to_compute = [('kills', 'kd'), ('cores', 'cd'), ('wools', 'wd'), 
                  ('monuments', 'md'), ('objectives', 'od')] 
         for stat in stats_to_compute:
             # get normal stat list
             stats = getattr(player, stat[0])
-    
-            # get index for start date of rolling stat
-            rolling = self.__get_rolling(config.n_days, player.dates)
             # get rolling value for that stat 
             rs = self.__rolling_stat(stats, player.deaths, rolling)
             # add rolling value to rolling value list
-            rs_name = 'r'+stat[1]
+            rs_name = 'r'+stat[1]+'7'
+            values = getattr(player, rs_name)
+            values.append(rs)
+            if len(values) > config.max_entries:
+                i = len(values) - config.max_entries
+                values = values[i:] 
+        
+            setattr(player, rs_name, values)
+            player.put()
+        
+        # rolling stat
+        stats_to_compute = [('kills', 'k'), ('cores', 'c'), ('wools', 'w'), 
+         ('monuments', 'm'), ('objectives', 'o')] 
+        for stat in stats_to_compute:
+            # get normal stat list
+            stats = getattr(player, stat[0])
+            # get rolling value for that stat 
+            rs = self.__rolling_stat(stats, 0, rolling)
+            # add rolling value to rolling value list
+            rs_name = 'r'+stat[1]+'7'
             values = getattr(player, rs_name)
             values.append(rs)
             if len(values) > config.max_entries:

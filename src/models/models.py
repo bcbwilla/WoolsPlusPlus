@@ -16,7 +16,6 @@ class Graph(db.Model):
 class Player(db.Model):
     """Represents a player"""
     name = db.StringProperty()
-    rolling = db.IntegerProperty()
     dates = db.ListProperty(datetime.datetime)
     kills = db.ListProperty(int, default=None)
     deaths = db.ListProperty(int, default=None)
@@ -29,9 +28,14 @@ class Player(db.Model):
     wd = db.ListProperty(float, default=None)
     md = db.ListProperty(float, default=None)
     od = db.ListProperty(float, default=None)
-    rkd = db.ListProperty(float, default=None)
-    rcd = db.ListProperty(float, default=None)
-    rwd = db.ListProperty(float, default=None)
-    rmd = db.ListProperty(float, default=None)
-    rod = db.ListProperty(float, default=None)
-    
+    rkd7 = db.ListProperty(float, default=None)
+    rcd7 = db.ListProperty(float, default=None)
+    rwd7 = db.ListProperty(float, default=None)
+    rmd7 = db.ListProperty(float, default=None)
+    rod7 = db.ListProperty(float, default=None)
+    rk7 = db.ListProperty(int, default=None)
+    rd7 = db.ListProperty(int, default=None)
+    rc7 = db.ListProperty(int, default=None)
+    rw7 = db.ListProperty(int, default=None)
+    rm7 = db.ListProperty(int, default=None)
+    ro7 = db.ListProperty(int, default=None)   
