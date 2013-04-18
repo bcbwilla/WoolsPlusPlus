@@ -76,9 +76,8 @@ class UpdateStatsHandler(webapp2.RequestHandler):
     
             # get index for start date of rolling stat
             rolling = self.__get_rolling(config.n_days, player.dates)
-            player.rolling = rolling[1]
             # get rolling value for that stat 
-            rs = self.__rolling_stat(stats, player.deaths, rolling[0])
+            rs = self.__rolling_stat(stats, player.deaths, rolling)
             # add rolling value to rolling value list
             rs_name = 'r'+stat[1]
             values = getattr(player, rs_name)
@@ -93,22 +92,28 @@ class UpdateStatsHandler(webapp2.RequestHandler):
           
     def __rolling_stat(self, stats, deaths, index):   
         """computes a player's rolling stat"""
-              
-        last_s = stats[-1]
-        first_s = stats[index]
-        last_d = deaths[-1]
-        first_d = deaths[index]
         
-        if last_s != None and first_s != None and last_d != None and first_d != None:
-            delta_s = float(last_s-first_s)   
-            delta_d = last_d - first_d
+        # make sure rolling stat does not extend to 
+        # before when data started being collected
+        if index:           
+            last_s = stats[-1]
+            first_s = stats[index]
+            last_d = deaths[-1]
+            first_d = deaths[index]
+            
+            if last_s != None and first_s != None and last_d != None and first_d != None:
+                delta_s = float(last_s-first_s)   
+                delta_d = last_d - first_d
+            else:
+                return None
+            
+            if delta_d != 0:
+                return delta_s/delta_d
+            else:
+                return delta_s
+            
         else:
             return None
-        
-        if delta_d != 0:
-            return delta_s/delta_d
-        else:
-            return delta_s
     
     
     def __get_rolling(self, days, dates):
@@ -121,10 +126,8 @@ class UpdateStatsHandler(webapp2.RequestHandler):
         current = dates[-1]
         for i,v in enumerate(reversed(dates)):
             if (current - v).days >= days:
-                n = days
                 i = len(dates) - i - 1
-                return (i, n)
+                return i
             else:
-                ind = 0
-                n = (current - dates[0]).days
-        return (ind, n)
+                ind = None
+        return ind
