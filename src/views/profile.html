@@ -109,22 +109,33 @@
 				<td> {{ '%.4f' % player.cd[table_size - 1 - loop.index0] }} </td>
 				<td> {{ '%.4f' % player.md[table_size - 1 - loop.index0] }} </td>
 				<td> {{ '%.4f' % player.od[table_size - 1 - loop.index0] }} </td>
-				<td> {{ '%.4f' % player.rkd[table_size - 1 - loop.index0] }} </td>
-				<td> {{ '%.4f' % player.rwd[table_size - 1 - loop.index0] }} </td>
-				<td> {{ '%.4f' % player.rcd[table_size - 1 - loop.index0] }} </td>
-				<td> {{ '%.4f' % player.rmd[table_size - 1 - loop.index0] }} </td>
-				<td> {{ '%.4f' % player.rod[table_size - 1 - loop.index0] }} </td>
 			</tr>
 			{% endfor %}
         </table>
-        <hr>
+        
         <br>
- 		Player size: {{ size }} mb.  
- 		<br><br>
- 		This is for debugging.  You can ignore it if you want.  But at the same time, you don't have to if you don't want to.
- 		<br>
- 		No big deal, totally your choice.
- 		
+        <br>
+ 			<table class=" table table-hover table-bordered">	
+			<tr>
+<!-- This is terrible programming practice, but it's mostly for debugging ATM -->				
+				<td> {{ player.dates | length }} </td>
+				<td> {{ player.kills | length }} </td>
+				<td> {{ player.deaths | length }} </td>
+				<td> {{ player.kd | length }} </td>
+				<td> {{ player.wd | length }} </td>
+				<td> {{ player.cd | length }} </td>
+				<td> {{ player.md | length }} </td>
+				<td> {{ player.od | length}} </td>
+				<td> {{ player.rk7 | length }} </td>
+				<td> {{ player.rd7 | length }} </td>
+				<td> {{ player.rkd7 | length }} </td>
+				<td> {{ player.rwd7 | length }} </td>
+				<td> {{ player.rcd7 | length }} </td>
+				<td> {{ player.rmd7 | length }} </td>
+				<td> {{ player.rod7 | length}} </td>
+			</tr>
+        </table>        
+        
       </div>
       {% endif %}
     </div>

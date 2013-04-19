@@ -30,7 +30,7 @@ class ProfileHandler(webapp2.RequestHandler):
                         base_img_url+'wdcdmd']
             
             # stats to print in stats table
-            print_list = ['date','kills','deaths','kd','wd','cd','md','od','rdk','rwd','rcd','rmd','rod']
+            print_list = ['date','kills','deaths','kd','wd','cd','md','od']
             table_size = len(player.kills)
             stat_length = len(player.kills)
                    

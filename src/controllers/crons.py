@@ -39,11 +39,15 @@ class UpdateStatsHandler(webapp2.RequestHandler):
                 # update KD separately from explicit calculation to get more decimal places
                 self.__update_player_value(player, 'kd', kd)
                 self.__update_player_value(player, 'dates', datetime.datetime.now())
-                self.__update_rolling_stats(player)
+                # updated rolling stat/deaths
+                self.__update_rolling_stats(player, div_deaths=True)
+                # update rolling regular stats
+                self.__update_rolling_stats(player, div_deaths=False)
+
                              
                 # Make some graphs
-                pplot = Plot(player, stats=[('kd','KD')])
-                pplot.put()
+#                pplot = Plot(player, stats=[('kd','KD')])
+#                pplot.put()
                 pplot = Plot(player, stats=[('wd','WD'),('cd', "CD"),('md','MD')])
                 pplot.put()
 
@@ -63,25 +67,47 @@ class UpdateStatsHandler(webapp2.RequestHandler):
     
     
     @db.transactional
-    def __update_rolling_stats(self, player):  
-        """updates a player's rolling stats""" 
-         
-         
+    def __update_rolling_stats(self, player, num_days=7, div_deaths=True):  
+        """updates a player's rolling stats
+        
+        num_days:   number of days used in computing rolling stat
+        div_deaths: true if you are computing a rolling stat that involves
+                    dividing by deaths (e.g. kd)
+        
+        """ 
+          
         # get index for start date of rolling stat
         rolling = self.__get_rolling(config.n_days, player.dates)
        
-        # rolling stat/deaths 
-        stats_to_compute = [('kills', 'kd'), ('cores', 'cd'), ('wools', 'wd'), 
-                 ('monuments', 'md'), ('objectives', 'od')] 
+        if div_deaths:          
+            # rolling stat/deaths.
+            stats_to_compute = [('kills', 'kd'), ('cores', 'cd'), ('wools', 'wd'), 
+                     ('monuments', 'md'), ('objectives', 'od')] 
+        else:
+            # rolling stat
+            stats_to_compute = [('kills', 'k'), ('cores', 'c'), ('wools', 'w'), 
+         ('monuments', 'm'), ('objectives', 'o')] 
+            
         for stat in stats_to_compute:
             # get normal stat list
             stats = getattr(player, stat[0])
             # get rolling value for that stat 
             rs = self.__rolling_stat(stats, player.deaths, rolling)
+            # if user does not have data going to beginning of rolling interval
+            if rs == None:
+                # data in lists with stat/deaths are floats.
+                # data in other stat lists are integers.  data store is strict like that.
+                if div_deaths:              
+                    rs = -1.0
+                else:
+                    rs = -1
+                    
             # add rolling value to rolling value list
-            rs_name = 'r'+stat[1]+'7'
+            rs_name = 'r'+stat[1]+str(num_days)
             values = getattr(player, rs_name)
             values.append(rs)
+            # make sure data list isn't full. if it is, trim off the oldest values to
+            # reduce it to correct length.
             if len(values) > config.max_entries:
                 i = len(values) - config.max_entries
                 values = values[i:] 
@@ -89,24 +115,6 @@ class UpdateStatsHandler(webapp2.RequestHandler):
             setattr(player, rs_name, values)
             player.put()
         
-        # rolling stat
-        stats_to_compute = [('kills', 'k'), ('cores', 'c'), ('wools', 'w'), 
-         ('monuments', 'm'), ('objectives', 'o')] 
-        for stat in stats_to_compute:
-            # get normal stat list
-            stats = getattr(player, stat[0])
-            # get rolling value for that stat 
-            rs = self.__rolling_stat(stats, 0, rolling)
-            # add rolling value to rolling value list
-            rs_name = 'r'+stat[1]+'7'
-            values = getattr(player, rs_name)
-            values.append(rs)
-            if len(values) > config.max_entries:
-                i = len(values) - config.max_entries
-                values = values[i:] 
-        
-            setattr(player, rs_name, values)
-            player.put()
     
           
     def __rolling_stat(self, stats, deaths, index):   
@@ -145,8 +153,8 @@ class UpdateStatsHandler(webapp2.RequestHandler):
         current = dates[-1]
         for i,v in enumerate(reversed(dates)):
             if (current - v).days >= days:
-                i = len(dates) - i - 1
-                return i
+                index = len(dates) - i - 1
+                return index
             else:
-                ind = None
-        return ind
+                index = None
+        return index

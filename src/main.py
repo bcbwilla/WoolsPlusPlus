@@ -13,4 +13,5 @@ app = webapp2.WSGIApplication([('/', mainh.MainPage),
                                ('/image', imageh.ImageHandler),
                                ('/allusers',allusersh.AllUsersHandler),
                                ('/about',abouth.AboutHandler),
+                               ('/updateschema',updateschema.UpdateSchema)
                                ], debug=True)
