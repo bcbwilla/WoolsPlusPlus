@@ -46,9 +46,14 @@ class UpdateStatsHandler(webapp2.RequestHandler):
 
                              
                 # Make some graphs
-#                pplot = Plot(player, stats=[('kd','KD')])
-#                pplot.put()
+                pplot = Plot(player, stats=[('kd','KD')])
+                pplot.plot_regular()
+                pplot.put()
                 pplot = Plot(player, stats=[('wd','WD'),('cd', "CD"),('md','MD')])
+                pplot.plot_regular()
+                pplot.put()
+                pplot = Plot(player, stats=[('rkd7','RKD7'),('kd','KD')], rolling=7)
+                pplot.plot_regular()
                 pplot.put()
 
 
@@ -85,7 +90,7 @@ class UpdateStatsHandler(webapp2.RequestHandler):
                      ('monuments', 'md'), ('objectives', 'od')] 
         else:
             # rolling stat
-            stats_to_compute = [('kills', 'k'), ('cores', 'c'), ('wools', 'w'), 
+            stats_to_compute = [('kills', 'k'), ('deaths', 'd'), ('cores', 'c'), ('wools', 'w'), 
          ('monuments', 'm'), ('objectives', 'o')] 
             
         for stat in stats_to_compute:
