@@ -33,6 +33,7 @@ class Plot:
         r = self.rolling # if a rolling plot, skip the first r entries since they are nonsense.
         for stat in self.stats:
             if len(self.dates) and len(stat) <= r: # see if there's data to plot
+                self.data = None
                 return None
             
             if i >= len(l_c):

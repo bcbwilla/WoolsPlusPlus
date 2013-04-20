@@ -3,7 +3,7 @@ contains the cron job that collects data from oc.tc
 """
 
 import webapp2
-import datetime
+from datetime import datetime
 
 from google.appengine.ext import db
 import pAProfileScraper as pap
@@ -38,11 +38,14 @@ class UpdateStatsHandler(webapp2.RequestHandler):
                     self.__update_player_value(player, stat, getattr(p_stats, stat))
                 # update KD separately from explicit calculation to get more decimal places
                 self.__update_player_value(player, 'kd', kd)
-                self.__update_player_value(player, 'dates', datetime.datetime.now())
+                self.__update_player_value(player, 'dates', datetime.now())
+                
+                # get index for start date of rolling stat
+                roll_index = self.__get_rolling(config.n_days, player.dates)
                 # updated rolling stat/deaths
-                self.__update_rolling_stats(player, div_deaths=True)
+                self.__update_rolling_stats(player, roll_index, div_deaths=True)
                 # update rolling regular stats
-                self.__update_rolling_stats(player, div_deaths=False)
+                self.__update_rolling_stats(player, roll_index, div_deaths=False)
 
                              
                 # Make some graphs
@@ -52,7 +55,7 @@ class UpdateStatsHandler(webapp2.RequestHandler):
                 pplot = Plot(player, stats=[('wd','WD'),('cd', "CD"),('md','MD')])
                 pplot.plot_regular()
                 pplot.put()
-                pplot = Plot(player, stats=[('rkd7','RKD7'),('kd','KD')], rolling=7)
+                pplot = Plot(player, stats=[('rkd7','RKD7'),('kd','KD')], rolling=config.n_entries)
                 pplot.plot_regular()
                 pplot.put()
 
@@ -72,7 +75,7 @@ class UpdateStatsHandler(webapp2.RequestHandler):
     
     
     @db.transactional
-    def __update_rolling_stats(self, player, num_days=7, div_deaths=True):  
+    def __update_rolling_stats(self, player, roll_index, div_deaths=True):  
         """updates a player's rolling stats
         
         num_days:   number of days used in computing rolling stat
@@ -81,9 +84,6 @@ class UpdateStatsHandler(webapp2.RequestHandler):
         
         """ 
           
-        # get index for start date of rolling stat
-        rolling = self.__get_rolling(config.n_days, player.dates)
-       
         if div_deaths:          
             # rolling stat/deaths.
             stats_to_compute = [('kills', 'kd'), ('cores', 'cd'), ('wools', 'wd'), 
@@ -97,7 +97,7 @@ class UpdateStatsHandler(webapp2.RequestHandler):
             # get normal stat list
             stats = getattr(player, stat[0])
             # get rolling value for that stat 
-            rs = self.__rolling_stat(stats, player.deaths, rolling)
+            rs = self.__rolling_stat(stats, player.deaths, roll_index)
             # if user does not have data going to beginning of rolling interval
             if rs == None:
                 # data in lists with stat/deaths are floats.
@@ -108,7 +108,7 @@ class UpdateStatsHandler(webapp2.RequestHandler):
                     rs = -1
                     
             # add rolling value to rolling value list
-            rs_name = 'r'+stat[1]+str(num_days)
+            rs_name = 'r'+stat[1]+str(config.n_days)
             values = getattr(player, rs_name)
             values.append(rs)
             # make sure data list isn't full. if it is, trim off the oldest values to
