@@ -1,4 +1,4 @@
 cron:
 - description: Update user stats and graphs
   url: /crons/updatestats
-  schedule: every 5 minutes
+  schedule: every 6 hours
