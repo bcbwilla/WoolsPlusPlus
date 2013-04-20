@@ -13,8 +13,8 @@ class ImageHandler(webapp2.RequestHandler):
         if (image and image.image):
             self.response.headers['Content-Type'] = 'image/png'
             self.response.out.write(image.image)
-        else:
-            self.redirect('/static/noimage.png')
+#        else:
+#            self.redirect('/static/noimage.png')
 
 
 def getImage(filename):
