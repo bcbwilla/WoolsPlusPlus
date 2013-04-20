@@ -19,6 +19,7 @@ class UpdateStatsHandler(webapp2.RequestHandler):
     def get(self):        
         q = Player().all()
         if q != None:
+            # update everyone's stats first
             for player in q:
                 url = config.base_url + str(player.name)
                 # get stats
@@ -46,8 +47,10 @@ class UpdateStatsHandler(webapp2.RequestHandler):
                 self.__update_rolling_stats(player, roll_index, div_deaths=True)
                 # update rolling regular stats
                 self.__update_rolling_stats(player, roll_index, div_deaths=False)
-
-                             
+            
+            # now update everyone's graphs. done separately so a problem with a player's 
+            # plots don't stop the rest of the players' stats from being updated.
+            for player in q:               
                 # Make some graphs
                 pplot = Plot(player, stats=[('kd','KD')])
                 pplot.plot_regular()
