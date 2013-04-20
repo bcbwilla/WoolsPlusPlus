@@ -25,8 +25,8 @@ class ProfileHandler(webapp2.RequestHandler):
             
             base_img_url = '/image?filename='+player_name+'_'
             # images to display
-            img_urls = [base_img_url+'kdrkd',
-                        base_img_url+'rod', 
+            img_urls = [base_img_url+'rkd7kd',
+                        base_img_url+'kd', 
                         base_img_url+'wdcdmd']
             
             # stats to print in stats table

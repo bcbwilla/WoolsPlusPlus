@@ -39,3 +39,4 @@ class Player(db.Model):
     rw7 = db.ListProperty(int, default=None)
     rm7 = db.ListProperty(int, default=None)
     ro7 = db.ListProperty(int, default=None)   
+    
