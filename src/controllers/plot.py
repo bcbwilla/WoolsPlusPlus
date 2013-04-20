@@ -7,6 +7,7 @@ import cStringIO
 from google.appengine.ext import db
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+from pylab import ScalarFormatter
 
 from models.models import Graph
 
@@ -25,7 +26,7 @@ class Plot:
         dates = mpl.dates.date2num(self.dates)    
         fig = plt.figure()
         fig.set_size_inches(6,3)
-        ax = fig.add_subplot(111) 
+        ax = fig.add_subplot(111, axisbg='white')
         
         # for some reason plot_date is not auto generating new colors for each new function 
         l_c = ['b', 'g', 'r', 'c', 'm', 'y']
@@ -44,7 +45,8 @@ class Plot:
             self.filename+=stat[0]
             
         ax.legend(loc=2, prop={'size':9})
-        fig.autofmt_xdate()   
+        fig.autofmt_xdate()
+        plt.gca().yaxis.set_major_formatter(ScalarFormatter(useOffset=False)) 
         plt.ylabel(self.ylabel)
         if self.title == '':
             title="wools++ (alpha)  Player: " + self.player.name
