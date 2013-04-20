@@ -87,6 +87,10 @@
         
         {% for img in img_urls %}
           <img src="{{ img }}"> 
+<!--          <form>
+			Direct Link: <input type="text" value="{{ img }}" readonly><br>
+			HTML: <input type="text" value='<a href="http://www.woolsplusplus.appspot.com"><img src="{{ img }}"> </a>' readonly><br>
+		</form>  -->
         {% endfor %}
    
  		<hr>
@@ -121,6 +125,10 @@
 				<td> {{ player.dates | length }} </td>
 				<td> {{ player.kills | length }} </td>
 				<td> {{ player.deaths | length }} </td>
+				<td> {{ player.wools | length }} </td>
+				<td> {{ player.cores | length }} </td>
+				<td> {{ player.monuments | length }} </td>
+				<td> {{ player.objectives | length}} </td>
 				<td> {{ player.kd | length }} </td>
 				<td> {{ player.wd | length }} </td>
 				<td> {{ player.cd | length }} </td>
@@ -128,6 +136,10 @@
 				<td> {{ player.od | length}} </td>
 				<td> {{ player.rk7 | length }} </td>
 				<td> {{ player.rd7 | length }} </td>
+				<td> {{ player.rw7 | length }} </td>
+				<td> {{ player.rc7 | length }} </td>
+				<td> {{ player.rm7 | length }} </td>
+				<td> {{ player.ro7 | length}} </td>
 				<td> {{ player.rkd7 | length }} </td>
 				<td> {{ player.rwd7 | length }} </td>
 				<td> {{ player.rcd7 | length }} </td>
