@@ -6,6 +6,7 @@ import webapp2
 from datetime import datetime
 
 from google.appengine.ext import db
+from google.appengine.api import urlfetch_errors
 import pAProfileScraper as pap
 
 from models.models import Player
@@ -23,7 +24,11 @@ class UpdateStatsHandler(webapp2.RequestHandler):
             for player in q:
                 url = config.base_url + str(player.name)
                 # get stats
-                p_stats = pap.PAProfileScraper(url, kills=True, deaths=True, objectives=True)
+                try:
+                    p_stats = pap.PAProfileScraper(url, kills=True, deaths=True, objectives=True)
+                except (urlfetch_errors.DeadlineExceededError, IndexError):
+                    continue
+                
                 
                 # explicitly compute KD so we have it with more decimal places
                 if p_stats.deaths != 0:  
