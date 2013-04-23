@@ -2,3 +2,7 @@ cron:
 - description: Update user stats and graphs
   url: /crons/updatestats
   schedule: every 6 hours
+- description: My Daily Backup
+  url: /_ah/datastore_admin/backup.create?kind=Player
+  schedule: every 24 hours
+  target: ah-builtin-python-bundle
