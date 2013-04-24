@@ -43,11 +43,16 @@ class Plot:
             plt.plot_date(dates[r:], stat_list[r:], ls='-', linewidth=2, label=stat[1], color=l_c[i])
             i+=1
             self.filename+=stat[0]
+        
+        
+        for tick in ax.xaxis.get_major_ticks():
+            tick.label.set_fontsize(10)
             
+        fig.autofmt_xdate()           
         ax.legend(loc=2, prop={'size':9})
-        fig.autofmt_xdate()
         plt.gca().yaxis.set_major_formatter(ScalarFormatter(useOffset=False)) 
         plt.ylabel(self.ylabel)
+        
         if self.title == '':
             title="wools++ (alpha)  Player: " + self.player.name
             plt.title(title, fontsize=11)
