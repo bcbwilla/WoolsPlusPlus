@@ -9,7 +9,7 @@ from google.appengine.ext import db
 class ImageHandler(webapp2.RequestHandler):
     def get(self):
         filename = self.request.get('filename')
-        image = getImage(filename)
+        image = get_image(filename)
         if (image and image.image):
             self.response.headers['Content-Type'] = 'image/png'
             self.response.out.write(image.image)
@@ -17,7 +17,7 @@ class ImageHandler(webapp2.RequestHandler):
 #            self.redirect('/static/noimage.png')
 
 
-def getImage(filename):
+def get_image(filename):
     result = db.GqlQuery("SELECT * FROM Graph WHERE filename = :1 LIMIT 1",
                     filename).fetch(1)
     if (len(result) > 0):
