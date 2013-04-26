@@ -20,7 +20,7 @@ class Plot:
         self.stats = stats
         self.ylabel = ylabel
         self.title = title
-        self.rolling = rolling
+#        self.rolling = rolling
         
     def plot_regular(self):
         dates = mpl.dates.date2num(self.dates)    
@@ -31,15 +31,23 @@ class Plot:
         # for some reason plot_date is not auto generating new colors for each new function 
         l_c = ['b', 'g', 'r', 'c', 'm', 'y']
         i = 0
-        r = self.rolling # if a rolling plot, skip the first r entries since they are nonsense.
+#        r = self.rolling # if a rolling plot, skip the first r entries since they are nonsense.
+
         for stat in self.stats:
-            if len(self.dates) and len(stat) <= r: # see if there's data to plot
-                self.data = None
-                return None
-            
+            # for plot line colors
             if i >= len(l_c):
                 i = 0
             stat_list = getattr(self.player, stat[0])
+            
+            # get first occurance that isn't "-1"
+            ri = [i for i,x in enumerate(stat_list) if x != -1]
+            if len(ri) >= 1:
+                r = ri[0] # index of first good data
+            else: # there's no data to plot
+                self.data = None
+                return None
+  
+            
             plt.plot_date(dates[r:], stat_list[r:], ls='-', linewidth=2, label=stat[1], color=l_c[i])
             i+=1
             self.filename+=stat[0]
