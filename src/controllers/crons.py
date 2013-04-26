@@ -29,6 +29,8 @@ class UpdateStatsHandler(webapp2.RequestHandler):
                 except (urlfetch_errors.DeadlineExceededError, IndexError):
                     continue
                 
+                if p_stats == None:
+                    continue
                 
                 # explicitly compute KD so we have it with more decimal places
                 if p_stats.deaths != 0:  
