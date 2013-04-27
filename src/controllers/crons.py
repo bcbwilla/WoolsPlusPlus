@@ -4,6 +4,7 @@ contains the cron job that collects data from oc.tc
 
 import webapp2
 from datetime import datetime
+import logging
 
 from google.appengine.ext import db
 from google.appengine.api import urlfetch_errors
@@ -13,6 +14,7 @@ from models.models import Player
 from config import config
 from plot import Plot
 
+logging.getLogger().setLevel(logging.INFO)
 
 class UpdateStatsHandler(webapp2.RequestHandler):
     """Updates all player's stats and makes data plots"""
@@ -47,7 +49,6 @@ class UpdateStatsHandler(webapp2.RequestHandler):
                 # update KD separately from explicit calculation to get more decimal places
                 self.__update_player_value(player, 'kd', kd)
                 self.__update_player_value(player, 'dates', datetime.now())
-                
                 # get index for start date of rolling stat
                 roll_index = self.__get_rolling(config.n_days, player.dates)
                 # updated rolling stat/deaths
@@ -94,11 +95,13 @@ class UpdateStatsHandler(webapp2.RequestHandler):
         
         """ 
           
-        if div_deaths:          
+        if div_deaths:
+            logging.info('Start rolling stat/death for '+player.name)          
             # rolling stat/deaths.
             stats_to_compute = [('kills', 'kd'), ('cores', 'cd'), ('wools', 'wd'), 
                      ('monuments', 'md'), ('objectives', 'od')] 
         else:
+            logging.info('Start regular rolling stat for '+player.name)
             # rolling stat
             stats_to_compute = [('kills', 'k'), ('deaths', 'd'), ('cores', 'c'), ('wools', 'w'), 
          ('monuments', 'm'), ('objectives', 'o')] 
@@ -107,7 +110,7 @@ class UpdateStatsHandler(webapp2.RequestHandler):
             # get normal stat list
             stats = getattr(player, stat[0])
             # get rolling value for that stat 
-            rs = self.__rolling_stat(stats, player.deaths, roll_index)
+            rs = self.__rolling_stat(stats, player.deaths, roll_index, div_deaths)
             # if user does not have data going to beginning of rolling interval
             if rs == None:
                 # data in lists with stat/deaths are floats.
@@ -117,9 +120,11 @@ class UpdateStatsHandler(webapp2.RequestHandler):
                 else:
                     rs = -1
                     
+            
             # add rolling value to rolling value list
             rs_name = 'r'+stat[1]+str(config.n_days)
             values = getattr(player, rs_name)
+
             values.append(rs)
             # make sure data list isn't full. if it is, trim off the oldest values to
             # reduce it to correct length.
@@ -132,27 +137,28 @@ class UpdateStatsHandler(webapp2.RequestHandler):
         
     
           
-    def __rolling_stat(self, stats, deaths, index):   
+    def __rolling_stat(self, stats, deaths, index, div_deaths):   
         """computes a player's rolling stat"""
         
         # make sure rolling stat does not extend to 
         # before when data started being collected
-        if index:           
+        if index:                          
             last_s = stats[-1]
             first_s = stats[index]
             last_d = deaths[-1]
             first_d = deaths[index]
-            
             if last_s != None and first_s != None and last_d != None and first_d != None:
-                delta_s = float(last_s-first_s)   
+                delta_s = last_s - first_s   
                 delta_d = last_d - first_d
             else:
                 return None
             
-            if delta_d != 0:
-                return delta_s/delta_d
-            else:
-                return delta_s
+            if delta_d != 0 and div_deaths:
+                return float(delta_s)/float(delta_d)
+            elif delta_d == 0 and div_deaths:
+                return float(delta_s)
+            elif div_deaths == False:
+                return int(delta_s)
             
         else:
             return None
