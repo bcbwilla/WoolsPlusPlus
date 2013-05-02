@@ -10,10 +10,11 @@
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
           <li><a href="/">Home</a></li>
+          <li><a href="/login">Login</a></li>
           <li class="active"><a href="/allusers">Users</a></li>
           <li><a href="/about">About</a></li>
         </ul>
-        <h3 class="muted">wools++ | {{player.name}}</h3>
+        <h3 class="muted">wools++</h3>
       </div>
        <hr>
 
@@ -26,38 +27,115 @@
  		{% else %}		
         <p class="lead"> {{ player.name }}: Status Report</p>
         
-        {% for img in img_urls %}
-          <img src="{{ img }}"> 
-<!--          <form>
-			Direct Link: <input type="text" value="{{ img }}" readonly><br>
-			HTML: <input type="text" value='<a href="http://www.woolsplusplus.appspot.com"><img src="{{ img }}"> </a>' readonly><br>
-		</form>  -->
+        {% for img in graph_urls %}
+          <img src="{{ img }}"> <br>
+			Direct Link: <span class="input-xlarge uneditable-input"> http://www.woolsplusplus.appspot.com{{ img }} </span><br>
+			HTML: <span class="input-xlarge uneditable-input"> &#60;img src="http://www.woolsplusplus.appspot.com{{ img }}"&#62; </span><br>
         {% endfor %}
    
  		<hr>
  		<div class="row">
- 		<p class="lead">Most Recent Data</p>
+ 		<p class="lead">General Stats</p>
  			<table class=" table table-hover table-bordered">
- 			<thead>
-			{% for stat in print_list %}
-			<th> {{ stat }} </th>
+	 			<thead>
+				<th> when </th>
+				<th> kills </th>
+				<th> deaths </th>
+				<th> wools </th>
+				<th> cores </th>
+				<th> monuments </th>
+				<th> objectives </th>
+				</thead>
+				{% for i in range(table_size) %}		
+				<tr>
+	<!-- This is terrible programming practice, but it's mostly for debugging ATM -->		
+					<td> {{ date_strings[table_size - 1 - loop.index0] }} </td>
+					<td> {{ player.kills[table_size - 1 - loop.index0] }} </td>
+					<td> {{ player.deaths[table_size - 1 - loop.index0] }} </td>
+					<td> {{ player.wools[table_size - 1- loop.index0] }} </td>
+					<td> {{ player.cores[table_size - 1 - loop.index0] }} </td>
+					<td> {{ player.monuments[table_size - 1 - loop.index0] }} </td>
+					<td> {{ player.objectives[table_size - 1 - loop.index0] }} </td>
+				</tr>
+				{% endfor %}
+        	</table>
+
+ 		<p class="lead">Stats / Deaths</p>
+ 			<table class=" table table-hover table-bordered">
+	 			<thead>
+				<th> when </th>
+				<th> kd </th>
+				<th> wd </th>
+				<th> cd </th>
+				<th> md </th>
+				<th> od </th>
+				</thead>
+				{% for i in range(table_size) %}		
+				<tr>
+	<!-- This is terrible programming practice, but it's mostly for debugging ATM -->				
+					<td> {{ date_strings[table_size - 1 - loop.index0] }} </td>
+					<td> {{ '%.4f' % player.kd[table_size - 1- loop.index0] }} </td>
+					<td> {{ '%.4f' % player.wd[table_size - 1 - loop.index0] }} </td>
+					<td> {{ '%.4f' % player.cd[table_size - 1 - loop.index0] }} </td>
+					<td> {{ '%.4f' % player.md[table_size - 1 - loop.index0] }} </td>
+					<td> {{ '%.4f' % player.od[table_size - 1 - loop.index0] }} </td>
+				</tr>
 			{% endfor %}
-			</thead>
-			{% for i in range(table_size) %}		
-			<tr>
-<!-- This is terrible programming practice, but it's mostly for debugging ATM -->				
-				<td> {{ date_strings[table_size - 1 - loop.index0] }} </td>
-				<td> {{ player.kills[table_size - 1 - loop.index0] }} </td>
-				<td> {{ player.deaths[table_size - 1 - loop.index0] }} </td>
-				<td> {{ '%.3f' % player.kd[table_size - 1- loop.index0] }} </td>
-				<td> {{ '%.4f' % player.wd[table_size - 1 - loop.index0] }} </td>
-				<td> {{ '%.4f' % player.cd[table_size - 1 - loop.index0] }} </td>
-				<td> {{ '%.4f' % player.md[table_size - 1 - loop.index0] }} </td>
-				<td> {{ '%.4f' % player.od[table_size - 1 - loop.index0] }} </td>
-				<td> {{ '%.4f' % player.rkd7[table_size - 1 - loop.index0] }} </td>
-			</tr>
+        	</table>
+        
+         <p class="lead">Rolling Stats</p>
+         
+        {% if stat_length <= n_entries %}  
+ 		<div class="alert alert-info">You don't have enough data yet to produce any rolling stats.  Check back later!</div>
+ 		{% else %}       
+         
+ 			<table class=" table table-hover table-bordered">
+	 			<thead>
+				<th> when </th>
+				<th> rk7 </th>
+				<th> rd7 </th>
+				<th> rw7 </th>
+				<th> rc7 </th>
+				<th> rm7 </th>
+				<th> ro7 </th>
+				</thead>
+				{% for i in range(table_size) %}		
+				<tr>
+	<!-- This is terrible programming practice, but it's mostly for debugging ATM -->				
+					<td> {{ date_strings[table_size - 1 - loop.index0] }} </td>
+					<td> {{ player.rk7[table_size - 1- loop.index0] }} </td>
+					<td> {{ player.rd7[table_size - 1 - loop.index0] }} </td>
+					<td> {{ player.rw7[table_size - 1 - loop.index0] }} </td>
+					<td> {{ player.rc7[table_size - 1 - loop.index0] }} </td>
+					<td> {{ player.rm7[table_size - 1 - loop.index0] }} </td>
+					<td> {{ player.ro7[table_size - 1 - loop.index0] }} </td>
+				</tr>
 			{% endfor %}
-        </table>
+        	</table>
+        	
+ 		<p class="lead">Rolling Stats / Deaths</p>
+ 			<table class=" table table-hover table-bordered">
+	 			<thead>
+				<th> when </th>
+				<th> rkd7 </th>
+				<th> rwd7 </th>
+				<th> rcd7 </th>
+				<th> rmd7 </th>
+				<th> rod7 </th>
+				</thead>
+				{% for i in range(table_size) %}		
+				<tr>
+	<!-- This is terrible programming practice, but it's mostly for debugging ATM -->				
+					<td> {{ date_strings[table_size - 1 - loop.index0] }} </td>
+					<td> {{ '%.4f' % player.rkd7[table_size - 1- loop.index0] }} </td>
+					<td> {{ '%.4f' % player.rwd7[table_size - 1 - loop.index0] }} </td>
+					<td> {{ '%.4f' % player.rcd7[table_size - 1 - loop.index0] }} </td>
+					<td> {{ '%.4f' % player.rmd7[table_size - 1 - loop.index0] }} </td>
+					<td> {{ '%.4f' % player.rod7[table_size - 1 - loop.index0] }} </td>
+				</tr>
+			{% endfor %}
+        	</table>
+        {% endif %}
         
         <br>
         <br>
