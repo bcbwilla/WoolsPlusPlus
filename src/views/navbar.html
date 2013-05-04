@@ -1,9 +1,52 @@
-      <div class="masthead">
         <ul class="nav nav-pills pull-right">
+        {% if page_title == 'Home' %}	
+          <li class="active"><a href="/">Home</a></li>
+            <li class="dropdown">  
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">User<b class="caret"></b></a>  
+              <ul class="dropdown-menu">
+               {% if user %}
+                 {% if user_profile_url %}   
+                    <li><a href="{{ user_profile_url }}">Profile</a></li>
+                  {% endif %}  
+                  <li><a href="{{logout_url}}">Log Out</a></li>
+                {% else %}
+                  <li><a href="/login">Login</a></li>  
+                {% endif %}
+                  <li><a href="/allusers"> All Users</a></li>
+              </ul>  
+            </li>
+          <li><a href="/about">About</a></li>
+          
+        {% elif page_title == 'Login' or page_title == 'Register' or page_title == 'Profile' or page_title == 'Users' %}	
           <li><a href="/">Home</a></li>
-          <li><a href="/allusers">Users</a></li>
+            <li class="dropdown active">  
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">User<b class="caret"></b></a>  
+              <ul class="dropdown-menu">
+               {% if user %}   
+                  <li><a href="{{ user_profile_url }}">Profile</a></li>  
+                  <li><a href="{{logout_url}}">Log Out</a></li>
+                {% else %}
+                  <li><a href="/login">Login</a></li> 
+                {% endif %}
+                  <li><a href="/allusers">All Users</a></li>
+              </ul>  
+            </li>
+          <li><a href="/about">About</a></li>
+       
+        {% elif page_title == 'About' %}	
+          <li><a href="/">Home</a></li>
+            <li class="dropdown">  
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">User<b class="caret"></b></a>  
+              <ul class="dropdown-menu">
+               {% if user %}   
+                  <li><a href="{{ user_profile_url }}">Profile</a></li>  
+                  <li><a href="{{logout_url}}">Log Out</a></li>
+                {% else %}
+                  <li><a href="/login">Login</a></li>  
+                {% endif %}
+                  <li><a href="/allusers">All Users</a></li>
+              </ul>  
+            </li>
           <li class="active"><a href="/about">About</a></li>
+        {% endif %}
         </ul>
-        <h3 class="muted">wools++</h3>
-      </div>
-       <hr>

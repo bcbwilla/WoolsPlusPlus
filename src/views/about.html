@@ -3,34 +3,38 @@
 	
 {% include 'header.html' %}
 
-  <body>
-    <div class="container-narrow">
-
-      <div class="masthead">
-        <ul class="nav nav-pills pull-right">
-          <li><a href="/">Home</a></li>
-          <li><a href="/login">Login</a></li>
-          <li><a href="/allusers">Users</a></li>
-          <li class="active"><a href="/about">About</a></li>
-        </ul>
-        <h3 class="muted">wools++</h3>
-      </div>
-       <hr>
-
-      <div class="row-fluid marketing">
+    <div class="row-fluid marketing">    	
         <div class="span12">
+      	
+          <h4>About</h4>
+          wools++ is a community-driven and fan-made project.  The part that does stuff is written in 
+          <a href="http://www.python.org/">python</a>, 
+          and it uses <a href="http://jinja.pocoo.org/">jinja2</a> with 
+          <a href="http://twitter.github.io/bootstrap/">bootstrap</a> html/css/javascript templates for displaying.  
+          wools++ uses <a href="http://www.crummy.com/software/BeautifulSoup/">BeautifulSoup</a> to collect data 
+          from users' profiles at <a href="http://www.oc.tc">OC</a> and 
+          <a href="http://matplotlib.org/">matplotlib</a> to produce the graphs. The project is hosted
+          on <a href="https://developers.google.com/appengine/">Google's App Engine</a>.  All of the source code
+          can be found <a href="https://github.com/bcbwilla/WoolsPlusPlus">here</a>.
+          <p>The project is currently in the experimental stage, so you may encounter some issues or bugs.
+          	  Sorry about that!</p> 
+          <br>
+          <div align="right">-<a href="http://www.oc.tc/bcbwilla">Ben</a></div>
+  
+          <hr>
+        	
           	<h4>FAQ</h4>
           	<dl>
           		<dt>My stats aren't updating!</dt>
           		<dd>wools++ only collects data a couple times per day (once every six hours, to be exact).  This is to limit 
-          			requests made to Project Ares' website, as well as to limit the work that the app has to do.  The frequency 
+          			requests made to OC's website, as well as to limit the work that the app has to do.  The frequency 
           			at which data is collected may change in the future.  Remember, wools++is more about "long term" stats than 
           			up-to-the-second ones.  </dd>
           	</dl>
           	<dl>
           		<dt>My stats aren't accurate / I found an arbitrary problem!</dt>
           		<dd>Please report all problems in the official wools++ <a href="http://www.oc.tc/">thread</a>
-          			 on Project Ares' forum.</dd>
+          			 on OC's forum.</dd>
           	</dl>
           	<dl>
           		<dt>What's a rolling stat?</dt>
@@ -61,31 +65,15 @@
           				<li>R=Rolling</li>
           			</ul>
           			Most stats are computed as something/deaths.  So, KD would be kills/deaths.  "RWD" means "rolling wools deaths"
-          			or (wools gotten in the past 14 days)/(deaths in the past 14 days)
+          			or (wools gotten in the past 7 days)/(deaths in the past 7 days)
           			</dd>
           	</dl>
           	 <dl>
-          		<dt>How do I put a graph on my profile on Project Ares?</dt>
+          		<dt>How do I put a graph on my profile on OC?</dt>
           		<dd>Copy the link in the box under the graph labeled "HTML" and paste it into the "About Me" section of your
-          			profile.</dd>
+          			profile.  If you do, it would be very much appreciated if you provided a link to this site or the corresponding
+          			forum post.  :)</dd>
           	</dl>
-          <hr>
-          <p>
-          <h4>About</h4>
-          wools++ is a community-driven and fan-made project.  The part that does stuff is written in 
-          <a href="http://www.python.org/">python</a>, 
-          and it uses <a href="http://jinja.pocoo.org/">jinja2</a> with 
-          <a href="http://twitter.github.io/bootstrap/">bootstrap</a> html/css/javascript templates for displaying.  
-          wools++ uses <a href="http://www.crummy.com/software/BeautifulSoup/">BeautifulSoup</a> to collect data 
-          from users' profiles at <a href="http://www.oc.tc">Project Ares</a> and 
-          <a href="http://matplotlib.org/">matplotlib</a> to produce the graphs. The project is hosted
-          on <a href="https://developers.google.com/appengine/">Google's App Engine</a>.  All of the source code
-          can be found <a href="https://github.com/bcbwilla/WoolsPlusPlus">here</a>.
-          <p>The project is currently in its alpha stages, so it will still be some time before I get things straightened
-          	out.  Sorry about that!</p> 
-          <br>
-          <div align="right">-<a href="http://www.oc.tc/bcbwilla">Ben</a></div>
-          </p>
           <hr>
         </div>
       </div>

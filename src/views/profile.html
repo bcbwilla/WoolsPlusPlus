@@ -3,21 +3,6 @@
 
 {% include 'header.html' %}
 
-  <body>
-
-    <div class="container-narrow">
-
-      <div class="masthead">
-        <ul class="nav nav-pills pull-right">
-          <li><a href="/">Home</a></li>
-          <li><a href="/login">Login</a></li>
-          <li class="active"><a href="/allusers">Users</a></li>
-          <li><a href="/about">About</a></li>
-        </ul>
-        <h3 class="muted">wools++</h3>
-      </div>
-       <hr>
-
       <div class="jumbotron">
       	
 		{% if stat_length < 1 %}
@@ -35,6 +20,7 @@
    
  		<hr>
  		<div class="row">
+ 			
  		<p class="lead">General Stats</p>
  			<table class=" table table-hover table-bordered">
 	 			<thead>
@@ -46,16 +32,15 @@
 				<th> monuments </th>
 				<th> objectives </th>
 				</thead>
-				{% for i in range(table_size) %}		
-				<tr>
-	<!-- This is terrible programming practice, but it's mostly for debugging ATM -->		
-					<td> {{ date_strings[table_size - 1 - loop.index0] }} </td>
-					<td> {{ player.kills[table_size - 1 - loop.index0] }} </td>
-					<td> {{ player.deaths[table_size - 1 - loop.index0] }} </td>
-					<td> {{ player.wools[table_size - 1- loop.index0] }} </td>
-					<td> {{ player.cores[table_size - 1 - loop.index0] }} </td>
-					<td> {{ player.monuments[table_size - 1 - loop.index0] }} </td>
-					<td> {{ player.objectives[table_size - 1 - loop.index0] }} </td>
+				{% for i in range(stat_table_size) %}		
+				<tr>						
+					<td> {{ dates[loop.index0] }} </td>
+					<td> {{ kills[loop.index0] }} </td>
+					<td> {{ deaths[loop.index0] }} </td>
+					<td> {{ wools[loop.index0] }} </td>
+					<td> {{ cores[loop.index0] }} </td>
+					<td> {{ monuments[loop.index0] }} </td>
+					<td> {{ objectives[loop.index0] }} </td>
 				</tr>
 				{% endfor %}
         	</table>
@@ -70,21 +55,20 @@
 				<th> md </th>
 				<th> od </th>
 				</thead>
-				{% for i in range(table_size) %}		
-				<tr>
-	<!-- This is terrible programming practice, but it's mostly for debugging ATM -->				
-					<td> {{ date_strings[table_size - 1 - loop.index0] }} </td>
-					<td> {{ '%.4f' % player.kd[table_size - 1- loop.index0] }} </td>
-					<td> {{ '%.4f' % player.wd[table_size - 1 - loop.index0] }} </td>
-					<td> {{ '%.4f' % player.cd[table_size - 1 - loop.index0] }} </td>
-					<td> {{ '%.4f' % player.md[table_size - 1 - loop.index0] }} </td>
-					<td> {{ '%.4f' % player.od[table_size - 1 - loop.index0] }} </td>
+				{% for i in range(stat_table_size) %}		
+				<tr>				
+					<td> {{ dates[loop.index0] }} </td>
+					<td> {{ '%.4f' % kd[loop.index0] }} </td>  
+					<td> {{ '%.4f' % wd[loop.index0] }} </td>
+					<td> {{ '%.4f' % cd[loop.index0] }} </td>
+					<td> {{ '%.4f' % md[loop.index0] }} </td>
+					<td> {{ '%.4f' % od[loop.index0] }} </td>
 				</tr>
 			{% endfor %}
         	</table>
         
          <p class="lead">Rolling Stats</p>
-         
+               
         {% if stat_length <= n_entries %}  
  		<div class="alert alert-info">You don't have enough data yet to produce any rolling stats.  Check back later!</div>
  		{% else %}       
@@ -99,16 +83,14 @@
 				<th> rm7 </th>
 				<th> ro7 </th>
 				</thead>
-				{% for i in range(table_size) %}		
-				<tr>
-	<!-- This is terrible programming practice, but it's mostly for debugging ATM -->				
-					<td> {{ date_strings[table_size - 1 - loop.index0] }} </td>
-					<td> {{ player.rk7[table_size - 1- loop.index0] }} </td>
-					<td> {{ player.rd7[table_size - 1 - loop.index0] }} </td>
-					<td> {{ player.rw7[table_size - 1 - loop.index0] }} </td>
-					<td> {{ player.rc7[table_size - 1 - loop.index0] }} </td>
-					<td> {{ player.rm7[table_size - 1 - loop.index0] }} </td>
-					<td> {{ player.ro7[table_size - 1 - loop.index0] }} </td>
+				{% for i in range(stat_table_size) %}						
+					<td> {{ dates[loop.index0]}} </td>
+					<td> {{ rk7[loop.index0] }} </td>
+					<td> {{ rd7[loop.index0] }} </td>
+					<td> {{ rw7[loop.index0] }} </td>
+					<td> {{ rc7[loop.index0] }} </td>
+					<td> {{ rm7[loop.index0] }} </td>
+					<td> {{ ro7[loop.index0] }} </td>
 				</tr>
 			{% endfor %}
         	</table>
@@ -123,15 +105,14 @@
 				<th> rmd7 </th>
 				<th> rod7 </th>
 				</thead>
-				{% for i in range(table_size) %}		
-				<tr>
-	<!-- This is terrible programming practice, but it's mostly for debugging ATM -->				
-					<td> {{ date_strings[table_size - 1 - loop.index0] }} </td>
-					<td> {{ '%.4f' % player.rkd7[table_size - 1- loop.index0] }} </td>
-					<td> {{ '%.4f' % player.rwd7[table_size - 1 - loop.index0] }} </td>
-					<td> {{ '%.4f' % player.rcd7[table_size - 1 - loop.index0] }} </td>
-					<td> {{ '%.4f' % player.rmd7[table_size - 1 - loop.index0] }} </td>
-					<td> {{ '%.4f' % player.rod7[table_size - 1 - loop.index0] }} </td>
+				{% for i in range(stat_table_size) %}		
+				<tr>	
+					<td> {{ dates[loop.index0] }} </td>
+					<td> {{ '%.4f' % rkd7[loop.index0] }} </td>
+					<td> {{ '%.4f' % rwd7[loop.index0] }} </td>
+					<td> {{ '%.4f' % rcd7[loop.index0] }} </td>
+					<td> {{ '%.4f' % rmd7[loop.index0] }} </td>
+					<td> {{ '%.4f' % rod7[loop.index0] }} </td>
 				</tr>
 			{% endfor %}
         	</table>
@@ -139,9 +120,9 @@
         
         <br>
         <br>
+        This is just for debugging, so you can ignore it if you want to.  Lemme know if ya see any bugs.
  			<table class=" table table-hover table-bordered">	
-			<tr>
-<!-- This is terrible programming practice, but it's mostly for debugging ATM -->				
+			<tr>							
 				<td> {{ player.dates | length }} </td>
 				<td> {{ player.kills | length }} </td>
 				<td> {{ player.deaths | length }} </td>
@@ -167,7 +148,7 @@
 				<td> {{ player.rod7 | length}} </td>
 			</tr>
         </table>        
-        
+
       </div>
       {% endif %}
     </div>

@@ -3,60 +3,32 @@
 
 {% include 'header.html' %}
 
-  <body>
-
-    <div class="container-narrow">
-
-      <div class="masthead">
-        <ul class="nav nav-pills pull-right">
-          <li class="active"><a href="/">Home</a></li>
-          <li><a href="/login">Login</a></li>
-          <li><a href="/allusers">Users</a></li>
-          <li><a href="/about">About</a></li>
-        </ul>
-        <h3 class="muted">wools++</h3>
-      </div>
-       <hr>
-
       <div class="jumbotron">
-<!--        <h1>HAI</h1> -->
-        <p class="lead"><strong>wools++</strong> provides Project Ares players with additional gameplay statistics including objectives/deaths, 
-        	rolling values and time series plots.</p>
+        <p class="lead"><strong>wools++</strong> provides players of the Overcast Network (OC) with additional 
+        	gameplay statistics including objectives/deaths, rolling values and time series plots.</p>
 
       </div>
      
       <hr>
 
       <div class="row-fluid marketing">
-        <div class="span6">
-          <h4>Join the fun:</h4>
-<!--          <p> -->
-          <br>
-          <fieldset>
-          <form method="post">
-          <input type="text" name="content" placeholder="Type a username">
-          <br>
-          <input class="btn btn-small btn-inverse" type="submit" value="Add Player">
-    	  <br>
-			{% if msg != '' %}
-          <div class="alert alert-error">{{ msg }}</div>
-          	{% endif %}
-      	</form>
-      	</fieldset>
-      	<br>
       	
-          	
-<!--          </p> -->
+        <div class="span3 table-centered">
+          <h4>Join the fun:</h4>
+          <br>
+          <a href="/login"><input class="btn btn-success" type="submit" value="Register Now!"></a>
+      	  <br>   	
         </div>
-
-        <div class="span6">
+      	   	
+        <div class="span9">
           <h4>Start collecting data today!</h4>
           <p>Add yourself to the database to start collecting data!  A few times each day, <strong>wools++</strong>
-          	pulls data from your profile at <a href="https://www.oc.tc">Project Ares</a> and adds it to the database 
+          	pulls data from your profile at <a href="https://www.oc.tc">OC</a> and adds it to the database 
           	here.  It then calculates some statistics and makes some plots.  Feel free to link directly to the plot 
-          	on your oc.tc profile page!
+          	on your OC profile page!
           </p>
         </div> 
+      	
       </div>
 
 	{% include 'footer.html' %}
