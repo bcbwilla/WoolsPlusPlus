@@ -6,7 +6,9 @@ it uses jinja2 with bootstrap html/css/javascript templates for displaying. wool
 to collect data from users' profiles at Project Ares and matplotlib to produce the graphs. The project 
 is hosted on Google's App Engine.
 
+
 --------------------------------------------------------------------
+
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
