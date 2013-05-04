@@ -1,3 +1,16 @@
+#This program is free software: you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+#
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 """
 contains the cron job that collects data from oc.tc
 """
@@ -8,13 +21,13 @@ import logging
 
 from google.appengine.ext import db
 from google.appengine.api import urlfetch_errors
+from google.appengine.api import memcache
 import pAProfileScraper as pap
 
 from models.models import Player
 from config import config
-from plot import Plot
+#from plot import Plot
 
-logging.getLogger().setLevel(logging.INFO)
 
 class UpdateStatsHandler(webapp2.RequestHandler):
     """Updates all player's stats and makes data plots"""
@@ -22,6 +35,7 @@ class UpdateStatsHandler(webapp2.RequestHandler):
     def get(self):        
         q = Player().all()
         if q != None:
+            q = list(q)
             # update everyone's stats first
             for player in q:
                 url = config.base_url + str(player.name)
@@ -58,17 +72,28 @@ class UpdateStatsHandler(webapp2.RequestHandler):
             
             # now update everyone's graphs. done separately so a problem with a player's 
             # plots don't stop the rest of the players' stats from being updated.
-            for player in q:               
-                # Make some graphs
-                pplot = Plot(player, stats=[('kd','KD')])
-                pplot.plot_regular()
-                pplot.put()
-                pplot = Plot(player, stats=[('wd','WD'),('cd', "CD"),('md','MD')])
-                pplot.plot_regular()
-                pplot.put()
-                pplot = Plot(player, stats=[('rkd7','RKD7'),('kd','KD')], rolling=config.n_entries)
-                pplot.plot_regular()
-                pplot.put()
+#            for player in q:               
+#                # Make some graphs
+#                pplot = Plot(player, stats=[('kd','KD')])
+#                pplot.plot_regular()
+#                pplot.put()
+#                pplot = Plot(player, stats=[('rw7','RW7'),('rc7', "RC7"),('rm7','RM7')])
+#                pplot.plot_regular()
+#                pplot.put()
+#                pplot = Plot(player, stats=[('rw7','RW7'),('rc7','RC7'),('rm7','RM7')])
+#                pplot.plot_regular()
+#                pplot.put()
+#                # plot fancy graph
+#                pplot = Plot(player)
+#                pplot.plot_rk7rd7rkd7()
+#                pplot.put()
+#            
+            # flush memcache
+            flushed = memcache.flush_all()
+            if flushed:
+                logging.info('memecache flushed')
+            else:
+                logging.error('unable to flush memcache')
 
 
     @db.transactional
