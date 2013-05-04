@@ -3,6 +3,7 @@ produces plots
 """
 
 import cStringIO
+import logging
 
 from google.appengine.ext import db
 import matplotlib.pyplot as plt
@@ -11,9 +12,10 @@ from pylab import ScalarFormatter
 
 from models.models import Graph
 
+logging.getLogger().setLevel(logging.INFO)
 
 class Plot:
-    def __init__(self, player, stats, ylabel='', title='', rolling=0):
+    def __init__(self, player, stats=[('kd','KD')], ylabel='', title='', rolling=0):
         self.player = player
         self.filename = player.name+'_'
         self.dates = player.dates
@@ -39,16 +41,16 @@ class Plot:
                 i = 0
             stat_list = getattr(self.player, stat[0])
             
-            # get first occurance that isn't "-1"
-            ri = [i for i,x in enumerate(stat_list) if x != -1]
+            # get first occurrence that isn't "-1"
+            ri = [j for j,x in enumerate(stat_list) if x != -1]
             if len(ri) >= 1:
                 r = ri[0] # index of first good data
             else: # there's no data to plot
                 self.data = None
                 return None
   
-            
-            plt.plot_date(dates[r:], stat_list[r:], ls='-', linewidth=2, label=stat[1], color=l_c[i])
+            plt.plot_date(dates[r:], stat_list[r:], ls='-', linewidth=2, 
+                          label=stat[1], color=l_c[i], markersize=4)
             i+=1
             self.filename+=stat[0]
         
@@ -62,7 +64,7 @@ class Plot:
         plt.ylabel(self.ylabel)
         
         if self.title == '':
-            title="wools++ (alpha)  Player: " + self.player.name
+            title="wools++ (alpha)  player: " + self.player.name
             plt.title(title, fontsize=11)
         else:
             plt.title(self.title)
@@ -71,6 +73,49 @@ class Plot:
         plt.savefig(sio, format="png", dpi=100, transparent=True)
         self.data = sio.getvalue()
 
+    def plot_rk7rd7rkd7(self):
+        rk7 = self.player.rk7
+        rd7 = self.player.rd7
+        rkd7 = self.player.rkd7        
+        dates = mpl.dates.date2num(self.dates) 
+        
+        # get first occurrence that isn't "-1"
+        ri = [j for j,x in enumerate(rk7) if x != -1]
+        if len(ri) >= 1:
+            r = ri[0] # index of first good data
+        else: # there's no data to plot
+            self.data = None
+            return None
+                 
+        fig = plt.figure()
+        fig.set_size_inches(6,3)
+        ax1 = fig.add_subplot(111) 
+        
+        ax1.plot_date(dates[r:], rk7[r:], ls='--', linewidth=2, color='c', markersize=4)
+        ax1.plot_date(dates[r:], rd7[r:], ls='--', linewidth=2, color='m', markersize=4)
+        
+        fig.autofmt_xdate()
+        #two axes
+        ax2 = ax1.twinx()
+        ax2.plot_date(dates[r:], rkd7[r:], ls='-', color='y', markersize=4)
+        
+        ax1.legend(['RK7','RD7'], loc=3, prop={'size':9})
+        ax2.legend(['RKD7'], loc=4, prop={'size':9})
+        for tick in ax1.xaxis.get_major_ticks():
+            tick.label.set_fontsize(10) 
+             
+        plt.gca().yaxis.set_major_formatter(ScalarFormatter(useOffset=False))
+        
+        if self.title == '':
+            title="wools++ (alpha)  player: " + self.player.name
+            plt.title(title, fontsize=11)
+        else:
+            plt.title(self.title)
+        
+        sio = cStringIO.StringIO()
+        plt.savefig(sio, format="png", dpi=100, transparent=True)
+        self.data = sio.getvalue()
+        self.filename+='rk7rd7rkd7'
 
     def put(self):
         """adds or updates a user's graph"""
