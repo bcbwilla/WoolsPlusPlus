@@ -3,15 +3,18 @@ Set all the url handlers to the corresponding urls
 """
 
 import webapp2
+import logging
 
-from controllers import crons, profileh, mainh, imageh, allusersh, abouth, updateschema
+from controllers import crons, imageh
+from controllers import pageh
 
-
-app = webapp2.WSGIApplication([('/', mainh.MainPage), 
+logging.getLogger().setLevel(logging.INFO)
+app = webapp2.WSGIApplication([('/', pageh.MainPage), 
                                ('/crons/updatestats', crons.UpdateStatsHandler),
-                               (r'/users/(.*)', profileh.ProfileHandler),
+                               (r'/users/(.*)', pageh.ProfileHandler),
                                ('/image', imageh.ImageHandler),
-                               ('/allusers',allusersh.AllUsersHandler),
-                               ('/about',abouth.AboutHandler),
-                               ('/updateschema',updateschema.UpdateSchema)
+                               ('/allusers',pageh.AllUsersHandler),
+                               ('/about',pageh.AboutHandler),
+                               ('/login',pageh.LoginHandler)
                                ], debug=True)
+
