@@ -26,7 +26,7 @@ import pAProfileScraper as pap
 
 from models.models import Player
 from config import config
-#from plot import Plot
+from plot import Plot
 
 
 class UpdateStatsHandler(webapp2.RequestHandler):
@@ -72,29 +72,25 @@ class UpdateStatsHandler(webapp2.RequestHandler):
             
             # now update everyone's graphs. done separately so a problem with a player's 
             # plots don't stop the rest of the players' stats from being updated.
-#            for player in q:               
-#                # Make some graphs
-#                pplot = Plot(player, stats=[('kd','KD')])
-#                pplot.plot_regular()
-#                pplot.put()
-#                pplot = Plot(player, stats=[('rw7','RW7'),('rc7', "RC7"),('rm7','RM7')])
-#                pplot.plot_regular()
-#                pplot.put()
-#                pplot = Plot(player, stats=[('rw7','RW7'),('rc7','RC7'),('rm7','RM7')])
-#                pplot.plot_regular()
-#                pplot.put()
-#                # plot fancy graph
-#                pplot = Plot(player)
-#                pplot.plot_rk7rd7rkd7()
-#                pplot.put()
-#            
+            for player in q:               
+                # Make some graphs
+                pplot = Plot(player, stats=[('kd','KD')])
+                pplot.plot_regular()
+                pplot.put()
+                pplot = Plot(player, stats=[('rw7','RW7'),('rc7', 'RC7'),('rm7','RM7')])
+                pplot.plot_regular()
+                pplot.put()
+                # plot fancy graph
+                pplot = Plot(player)
+                pplot.plot_rk7rd7rkd7()
+                pplot.put()
+            
             # flush memcache
             flushed = memcache.flush_all()
             if flushed:
                 logging.info('memecache flushed')
             else:
                 logging.error('unable to flush memcache')
-
 
     @db.transactional
     def __update_player_value(self, player, stat, value):
@@ -108,7 +104,6 @@ class UpdateStatsHandler(webapp2.RequestHandler):
             values = values[i:]
         setattr(player, stat, values)
         player.put()
-    
     
     @db.transactional
     def __update_rolling_stats(self, player, roll_index, div_deaths=True):  
@@ -145,7 +140,6 @@ class UpdateStatsHandler(webapp2.RequestHandler):
                 else:
                     rs = -1
                     
-            
             # add rolling value to rolling value list
             rs_name = 'r'+stat[1]+str(config.n_days)
             values = getattr(player, rs_name)
@@ -159,8 +153,6 @@ class UpdateStatsHandler(webapp2.RequestHandler):
         
             setattr(player, rs_name, values)
             player.put()
-        
-    
           
     def __rolling_stat(self, stats, deaths, index, div_deaths):   
         """computes a player's rolling stat"""
@@ -187,8 +179,7 @@ class UpdateStatsHandler(webapp2.RequestHandler):
             
         else:
             return None
-    
-    
+        
     def __get_rolling(self, days, dates):
         """returns the number of stats to use to achieve a rolling interval of a given length
         
