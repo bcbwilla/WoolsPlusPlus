@@ -2,10 +2,14 @@
 datastore models
 """
 
-
-import datetime
+from datetime import datetime
 from google.appengine.ext import db
 
+class Account(db.Model):
+    """Represents a user's account"""
+    nickname = db.StringProperty(default=None)  
+    mc_account = db.StringProperty(default=None)
+    profile_url = db.StringProperty(default=None)
 
 class Graph(db.Model):
     """Represents a player's graph"""
@@ -17,7 +21,7 @@ class Graph(db.Model):
 class Player(db.Model):
     """Represents a player"""
     name = db.StringProperty()
-    dates = db.ListProperty(datetime.datetime)
+    dates = db.ListProperty(datetime)
     kills = db.ListProperty(int, default=None)
     deaths = db.ListProperty(int, default=None)
     cores = db.ListProperty(int, default=None)
@@ -40,4 +44,3 @@ class Player(db.Model):
     rw7 = db.ListProperty(int, default=None)
     rm7 = db.ListProperty(int, default=None)
     ro7 = db.ListProperty(int, default=None)   
-    
