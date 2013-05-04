@@ -1,4 +1,4 @@
-wools++ provides Project Ares players with additional gameplay statistics including objectives/deaths, 
+**wools++** provides Overcast Network (OC) players with additional gameplay statistics including objectives/deaths, 
 rolling values and time series plots.
 
 wools++ is a community-driven and fan-made project. The part that does stuff is written in python, and 
@@ -7,6 +7,7 @@ to collect data from users' profiles at Project Ares and matplotlib to produce t
 is hosted on Google's App Engine.
 
 --------------------------------------------------------------------
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
