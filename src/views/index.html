@@ -13,14 +13,21 @@
 
       <div class="row-fluid marketing">
       	
-        <div class="span3 table-centered">
+        <div class="span4 table-centered">      	
+        {% if user %}
+          <h4>Check your stats:</h4>
+          <br>
+          <a href="{{ user_profile_url }}"><input class="btn btn-success" type="submit" value="Profile"></a>
+      	  <br> 
+        {% else %}
           <h4>Join the fun:</h4>
           <br>
           <a href="/login"><input class="btn btn-success" type="submit" value="Register Now!"></a>
-      	  <br>   	
+      	  <br>   	      	  
+      	{% endif %}
         </div>
       	   	
-        <div class="span9">
+        <div class="span8">
           <h4>Start collecting data today!</h4>
           <p>Add yourself to the database to start collecting data!  A few times each day, <strong>wools++</strong>
           	pulls data from your profile at <a href="https://www.oc.tc">OC</a> and adds it to the database 
