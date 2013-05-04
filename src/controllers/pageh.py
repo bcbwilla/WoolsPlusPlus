@@ -296,65 +296,6 @@ class LoginHandler(webapp2.RequestHandler):
         }
         template = JINJA_ENVIRONMENT.get_template('register.html')
         self.response.write(template.render(template_values))
- 
-    
-#class RegisterHandler(webapp2.RequestHandler):
-#    """ renders registration page """
-#    
-#    def get(self):
-#        user = users.get_current_user()
-#        if user:
-#            account = Account.get_by_key_name(str(user.nickname))
-#            if account is None:
-#                self.render_page()
-#            else:
-#                self.render_page(msg="You've already linked an account!", render_form=False, account=account,
-#                                 user=True)
-#        else:
-#            self.redirect(users.create_login_url(self.request.uri))
-#
-#    def post(self):
-#        mc_account = cgi.escape(self.request.get('content')).strip()
-#             
-#        if mc_account == '':
-#            self.render_page() 
-#        else:
-#            if confirm_player(mc_account):
-#                user = users.get_current_user()
-#                if user:
-#                    # update account
-#                    account = Account.get_by_key_name(str(user.nickname))
-#                    if account is not None:
-#                        self.render_page(msg="You've already linked an account!", render_form=False)
-#                    else:
-#                        p_url = "/users/" + mc_account
-#                        add_account(mc_account, str(user.nickname), p_url)
-#                        # add user
-#                        add_player(mc_account)
-#                        self.render_page(msg="Successfully linked.", error=False, p_url=p_url)                     
-#                else:
-#                    self.redirect(users.create_login_url(self.request.uri))                  
-#            else:
-#                self.render_page(msg="Player doesn't exist, you dirty trickster.", error=True)
-#
-#    def render_page(self, account=None, user=False, msg="", p_url="", error=False, render_form=True):
-#        if account is not None:
-#            user_profile_url = account.profile_url
-#        else:
-#            user_profile_url = None
-#        
-#        template_values = {
-#            'page_title': 'Register',
-#            'msg': msg,
-#            'error': error,
-#            'p_url': p_url,
-#            'render_form': render_form,
-#            'logout_url': users.create_logout_url('/'),
-#            'user': user,
-#            'user_profile_url': user_profile_url
-#        }
-#        template = JINJA_ENVIRONMENT.get_template('register.html')
-#        self.response.write(template.render(template_values))
 
 
 """ Some useful global functions """
