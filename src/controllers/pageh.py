@@ -139,10 +139,16 @@ class ProfileHandler(webapp2.RequestHandler):
                     graph_urls.append("/image?filename="+img_filename)
 
             stat_length = len(player.kills)
-            stat_table_size = 15  #maximum size for stats table
-            p_stats = self.prepare_player_data(player, stat_table_size)
-            stat_table_size = len(p_stats['kills'])  #updated size for stats table if p doesn't have enough
-            r_stat_table_size = len(p_stats['kd'])
+            if stat_length >= 1:
+                stat_table_size = 15  #maximum size for stats table
+                p_stats = self.prepare_player_data(player, stat_table_size)
+                stat_table_size = len(p_stats['kills'])  #updated size for stats table if p doesn't have enough
+                r_stat_table_size = len(p_stats['kd'])
+            else:
+                stat_table_size = 0
+                stat_table_size = 0
+                p_stats = None
+                r_stat_table_size = 0
                      
             account = get_user_account()
             if account is not None:
@@ -151,7 +157,7 @@ class ProfileHandler(webapp2.RequestHandler):
                 user=False
                 
             self.render_page(player, stat_length, stat_table_size, r_stat_table_size,
-                              graph_urls, p_stats, config.n_entries, account=account, user=user)
+                              graph_urls, config.n_entries, account=account, user=user, p_stats=p_stats)
         else:
             self.redirect('/')
            
@@ -205,7 +211,7 @@ class ProfileHandler(webapp2.RequestHandler):
         
         
     def render_page(self, player, stat_length, stat_table_size, r_stat_table_size,
-                     graph_urls, p_stats, n_entries, account=None, user=False):       
+                     graph_urls, n_entries, p_stats=None, account=None, user=False):       
         if account is not None:
             user_profile_url = account.profile_url
         else:
@@ -225,7 +231,8 @@ class ProfileHandler(webapp2.RequestHandler):
         }
         
         # add stats stuff
-        template_values.update(p_stats)
+        if p_stats is not None:
+            template_values.update(p_stats)
         
         template = JINJA_ENVIRONMENT.get_template('profile.html')
         self.response.write(template.render(template_values))
