@@ -120,7 +120,11 @@ class MainPage(webapp2.RequestHandler):
 class ProfileHandler(webapp2.RequestHandler):
     """ render player profile """
     
-    def get(self, player_name):       
+    def get(self, player_name):
+        
+        if player_name == '':
+            self.redirect('/')
+               
         player_name = player_name.lower()
         
         player = self.get_player(player_name)
