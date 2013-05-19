@@ -18,26 +18,77 @@ contains the cron job that collects data from oc.tc
 import webapp2
 from datetime import datetime
 import logging
+import random
 
 from google.appengine.ext import db
 from google.appengine.api import urlfetch_errors
 from google.appengine.api import memcache
+from google.appengine.api import runtime
 import pAProfileScraper as pap
 
 from models.models import Player
 from config import config
-from plot import Plot
+#from plot import Plot
 
 
 class UpdateStatsHandler(webapp2.RequestHandler):
-    """Updates all player's stats and makes data plots"""
+    """Updates all player's stats"""
     
     def get(self):        
         q = Player().all()
         if q != None:
             q = list(q)
-            # update everyone's stats first
-            for player in q:
+            random.shuffle(q)
+            
+#            # update everyone's stats first
+#            k = 0
+#            while k < len(q) and not runtime.is_shutting_down():
+#                player = q[k]
+#                
+##            for player in q:
+#                url = config.base_url + str(player.name)
+#                # get stats
+#                try:
+#                    p_stats = pap.PAProfileScraper(url, kills=True, deaths=True, objectives=True)
+#                except (urlfetch_errors.DeadlineExceededError, IndexError):
+#                    continue
+#                
+#                if p_stats == None:
+#                    continue
+#                
+#                # explicitly compute KD so we have it with more decimal places
+#                if p_stats.deaths != 0:  
+#                    kd = float(p_stats.kills)/p_stats.deaths
+#                else:
+#                    kd = float(p_stats.kills)
+#                
+#                #fields to update
+#                stats = ['kills', 'deaths', 'cores', 'wools', 'monuments', 'objectives',
+#                         'cd', 'wd', 'md', 'od']
+#                
+#                for stat in stats:
+#                    self.__update_player_value(player, stat, getattr(p_stats, stat))
+#                # update KD separately from explicit calculation to get more decimal places
+#                self.__update_player_value(player, 'kd', kd)
+#                self.__update_player_value(player, 'dates', datetime.now())
+#                # get index for start date of rolling stat
+#                roll_index = self.__get_rolling(config.n_days, player.dates)
+#                # updated rolling stat/deaths
+#                self.__update_rolling_stats(player, roll_index, div_deaths=True)
+#                # update rolling regular stats
+#                self.__update_rolling_stats(player, roll_index, div_deaths=False)
+#                
+#                if runtime.is_shutting_down():
+#                    logging.info('backend runtime is shutting down.')
+#                
+#                k = k + 1
+ 
+            k = 0
+            while k < len(q) and not runtime.is_shutting_down():
+                player = q[k]
+                
+                logging.info(player.name)
+    #            for player in q:
                 url = config.base_url + str(player.name)
                 # get stats
                 try:
@@ -47,43 +98,13 @@ class UpdateStatsHandler(webapp2.RequestHandler):
                 
                 if p_stats == None:
                     continue
+
+                self.__update_player_stats(player, p_stats)
                 
-                # explicitly compute KD so we have it with more decimal places
-                if p_stats.deaths != 0:  
-                    kd = float(p_stats.kills)/p_stats.deaths
-                else:
-                    kd = float(p_stats.kills)
-                
-                #fields to update
-                stats = ['kills', 'deaths', 'cores', 'wools', 'monuments', 'objectives',
-                         'cd', 'wd', 'md', 'od']
-                
-                for stat in stats:
-                    self.__update_player_value(player, stat, getattr(p_stats, stat))
-                # update KD separately from explicit calculation to get more decimal places
-                self.__update_player_value(player, 'kd', kd)
-                self.__update_player_value(player, 'dates', datetime.now())
-                # get index for start date of rolling stat
-                roll_index = self.__get_rolling(config.n_days, player.dates)
-                # updated rolling stat/deaths
-                self.__update_rolling_stats(player, roll_index, div_deaths=True)
-                # update rolling regular stats
-                self.__update_rolling_stats(player, roll_index, div_deaths=False)
+                if runtime.is_shutting_down():
+                    logging.info('backend runtime is shutting down.')
             
-            # now update everyone's graphs. done separately so a problem with a player's 
-            # plots don't stop the rest of the players' stats from being updated.
-            for player in q:               
-                # Make some graphs
-                pplot = Plot(player, stats=[('kd','KD')])
-                pplot.plot_regular()
-                pplot.put()
-                pplot = Plot(player, stats=[('rw7','RW7'),('rc7', 'RC7'),('rm7','RM7')])
-                pplot.plot_regular()
-                pplot.put()
-                # plot fancy graph
-                pplot = Plot(player)
-                pplot.plot_rk7rd7rkd7()
-                pplot.put()
+                k = k + 1
             
             # flush memcache
             flushed = memcache.flush_all()
@@ -92,16 +113,67 @@ class UpdateStatsHandler(webapp2.RequestHandler):
             else:
                 logging.error('unable to flush memcache')
 
+# new more efficient stats update?
+    @db.transactional
+    def __update_player_stats(self, player, p_stats):
+        # update everyone's stats first
+            
+            # explicitly compute KD so we have it with more decimal places
+            if p_stats.deaths != 0:  
+                kd = float(p_stats.kills)/p_stats.deaths
+            else:
+                kd = float(p_stats.kills)
+            
+#
+# regular stats
+#
+#fields to update
+            stats = ['kills', 'deaths', 'cores', 'wools', 'monuments', 'objectives',
+                     'cd', 'wd', 'md', 'od']
+            
+            for stat in stats:
+                value = getattr(p_stats, stat)
+                values = getattr(player, stat)
+                values.append(value)
+                setattr(player, stat, values)
+                
+                
+# do kd seperately for better precision
+            value = kd
+            values = getattr(player, 'kd')
+            values.append(value)
+            setattr(player, 'kd', values)    
+            
+            value = datetime.now()
+            values = getattr(player, 'dates')
+            values.append(value)
+            setattr(player, 'dates', values)                
+                                    
+#
+# rolling stats
+# 
+            roll_index = self.__get_rolling(config.n_days, player.dates)
+            # updated rolling stat/deaths
+            player = self.__update_rolling_stats(player, roll_index, div_deaths=True)
+            # update rolling regular stats
+            player = self.__update_rolling_stats(player, roll_index, div_deaths=False)
+            
+# do this once AFTER updating all the fields!    
+            player.put()
+            logging.info('put ' + player.name)
+                    
+
+
     @db.transactional
     def __update_player_value(self, player, stat, value):
         """updates a player's value"""
         
         values = getattr(player, stat)
         values.append(value)
-        # see if the user has filled the data list
-        if len(values) > config.max_entries:
-            i = len(values) - config.max_entries
-            values = values[i:]
+#        # see if the user has filled the data list
+#        if len(values) > config.max_entries:
+#            i = len(values) - config.max_entries
+#            values = values[i:]
         setattr(player, stat, values)
         player.put()
     
@@ -119,14 +191,15 @@ class UpdateStatsHandler(webapp2.RequestHandler):
             logging.info('Start rolling stat/death for '+player.name)          
             # rolling stat/deaths.
             stats_to_compute = [('kills', 'kd'), ('cores', 'cd'), ('wools', 'wd'), 
-                     ('monuments', 'md'), ('objectives', 'od')] 
+                                ('monuments', 'md'), ('objectives', 'od')] 
         else:
             logging.info('Start regular rolling stat for '+player.name)
             # rolling stat
             stats_to_compute = [('kills', 'k'), ('deaths', 'd'), ('cores', 'c'), ('wools', 'w'), 
-         ('monuments', 'm'), ('objectives', 'o')] 
-            
+                                ('monuments', 'm'), ('objectives', 'o')] 
+               
         for stat in stats_to_compute:
+            logging.info(stat[0])
             # get normal stat list
             stats = getattr(player, stat[0])
             # get rolling value for that stat 
@@ -145,14 +218,10 @@ class UpdateStatsHandler(webapp2.RequestHandler):
             values = getattr(player, rs_name)
 
             values.append(rs)
-            # make sure data list isn't full. if it is, trim off the oldest values to
-            # reduce it to correct length.
-            if len(values) > config.max_entries:
-                i = len(values) - config.max_entries
-                values = values[i:] 
-        
+            logging.info('updating '+player.name+' '+rs_name)
             setattr(player, rs_name, values)
-            player.put()
+        return player
+#            player.put()
           
     def __rolling_stat(self, stats, deaths, index, div_deaths):   
         """computes a player's rolling stat"""
@@ -195,3 +264,45 @@ class UpdateStatsHandler(webapp2.RequestHandler):
             else:
                 index = None
         return index
+    
+    
+class UpdatePlotsHandler(webapp2.RequestHandler):
+    """Updates all player's plots"""
+    
+    
+    def get(self):        
+        q = Player().all()
+        if q != None:
+            q = list(q)
+            random.shuffle(q)
+            logging.info('updating graphs')
+            # now update everyone's graphs. done separately so a problem with a player's 
+            # plots don't stop the rest of the players' stats from being updated.
+            k = 0
+            while k < len(q) and not runtime.is_shutting_down():
+            
+#            for player in q:              
+                player = q[k] 
+                # Make some graphs
+                pplot = Plot(player, stats=[('kd','KD')])
+                pplot.plot_regular()
+                pplot.put()
+                pplot = Plot(player, stats=[('rw7','RW7'),('rc7', 'RC7'),('rm7','RM7')])
+                pplot.plot_regular()
+                pplot.put()
+                # plot fancy graph
+                pplot = Plot(player)
+                pplot.plot_rk7rd7rkd7()
+                pplot.put()
+                
+                if runtime.is_shutting_down():
+                    logging.info('backend runtime is shutting down.')                
+                
+                k = k + 1
+                
+            # flush memcache
+            flushed = memcache.flush_all()
+            if flushed:
+                logging.info('memecache flushed')
+            else:
+                logging.error('unable to flush memcache')
