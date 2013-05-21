@@ -9,7 +9,7 @@ is hosted on Google's App Engine.
 --------------------------------------------------------------------
 Setup
 
-To run properly, it requires BeautifulSoup, OcTcProfilerScaper, and twitter bootstrap.
+To run  properly, it requires BeautifulSoup, OcTcProfilerScaper, and twitter bootstrap.
 
 --------------------------------------------------------------------
 
