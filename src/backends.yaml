@@ -1,5 +1,5 @@
 backends:
 - name: updateplayers
   instances: 1
-  class: B4
+  class: B4_1G
   options: dynamic

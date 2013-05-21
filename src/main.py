@@ -24,6 +24,7 @@ from controllers import pageh
 logging.getLogger().setLevel(logging.INFO)
 app = webapp2.WSGIApplication([('/', pageh.MainPage), 
                                ('/crons/updatestats', crons.UpdateStatsHandler),
+                               ('/crons/updateplots', crons.UpdatePlotsHandler),
                                (r'/users/(.*)', pageh.ProfileHandler),
                                ('/image', imageh.ImageHandler),
                                ('/allusers',pageh.AllUsersHandler),

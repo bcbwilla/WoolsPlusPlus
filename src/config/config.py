@@ -18,7 +18,7 @@ This file contains some common constants relevant to statistics collecting.
 """
 
 # Number related to stat data storage
-n_jobs = 4                          # Number of jobs per day
+n_jobs = 1                          # Number of jobs per day
 n_months = 4                        # Number of months of data to store
 n_days = 7                         # Number of days to use in a rolling stat
 n_entries = n_jobs*n_days           # Number of entries needed to get n-day rolling stat

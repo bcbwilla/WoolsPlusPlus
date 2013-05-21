@@ -33,14 +33,15 @@ class ImageHandler(webapp2.RequestHandler):
 
 def get_image(filename):
     result = memcache.get(filename)
-    if result is not None and len(result) > 0:
+    if result and len(result) > 0:
         logging.info('got '+filename+' from the memcache')
         return result[0]
     else:
         result = db.GqlQuery("SELECT * FROM Graph WHERE filename = :1 LIMIT 1",
                     filename).fetch(1)
         memcache.add(filename, result, 60)
-        logging.info('added '+filename+' to the memcache')
+        logging.info('added '+filename+' to the memcache!!!')
+        
         if (len(result) > 0):
             return result[0]
         else:

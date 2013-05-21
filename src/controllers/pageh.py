@@ -63,6 +63,11 @@ class AllUsersHandler(webapp2.RequestHandler):
         player_list.order("name")
         player_list = list(player_list)
         
+#        p_name_date = []
+#        for player in player_list:
+#            join_time =  convert_time(player.dates[0])
+#            p_name_date.append((player.name, join_time))
+        
         account = get_user_account()
         if account is not None:
             user=True
@@ -124,46 +129,46 @@ class ProfileHandler(webapp2.RequestHandler):
         
         if player_name == '':
             self.redirect('/')
-               
-        player_name = player_name.lower()
-        
-        player = self.get_player(player_name)
-        
-        if player:
-            # images
-            base_img_filename = player_name+'_'
-            # images to display
-            img_urls = [base_img_filename+'kd', 
-                        base_img_filename+'rw7rc7rm7',
-                        base_img_filename+'rk7rd7rkd7']
-            # see what images to display
-            graph_urls = []
-            for img_filename in img_urls:
-                if imageh.get_image(img_filename) != None:
-                    graph_urls.append("/image?filename="+img_filename)
-
-            stat_length = len(player.kills)
-            if stat_length >= 1:
-                stat_table_size = 15  #maximum size for stats table
-                p_stats = self.prepare_player_data(player, stat_table_size)
-                stat_table_size = len(p_stats['kills'])  #updated size for stats table if p doesn't have enough
-                r_stat_table_size = len(p_stats['kd'])
+        else:                   
+            player_name = player_name.lower()
+            
+            player = self.get_player(player_name)
+            
+            if player:
+                # images
+                base_img_filename = player_name+'_'
+                # images to display
+                img_urls = [base_img_filename+'kd', 
+                            base_img_filename+'rw7rc7rm7',
+                            base_img_filename+'rk7rd7rkd7']
+                # see what images to display
+                graph_urls = []
+                for img_filename in img_urls:
+                    if imageh.get_image(img_filename) != None:
+                        graph_urls.append("/image?filename="+img_filename)
+    
+                stat_length = len(player.kills)
+                if stat_length >= 1:
+                    stat_table_size = 15  #maximum size for stats table
+                    p_stats = self.prepare_player_data(player, stat_table_size)
+                    stat_table_size = len(p_stats['kills'])  #updated size for stats table if p doesn't have enough
+                    r_stat_table_size = len(p_stats['kd'])
+                else:
+                    stat_table_size = 0
+                    stat_table_size = 0
+                    p_stats = None
+                    r_stat_table_size = 0
+                         
+                account = get_user_account()
+                if account is not None:
+                    user=True
+                else:
+                    user=False
+                    
+                self.render_page(player, stat_length, stat_table_size, r_stat_table_size,
+                                  graph_urls, config.n_entries, account=account, user=user, p_stats=p_stats)
             else:
-                stat_table_size = 0
-                stat_table_size = 0
-                p_stats = None
-                r_stat_table_size = 0
-                     
-            account = get_user_account()
-            if account is not None:
-                user=True
-            else:
-                user=False
-                
-            self.render_page(player, stat_length, stat_table_size, r_stat_table_size,
-                              graph_urls, config.n_entries, account=account, user=user, p_stats=p_stats)
-        else:
-            self.redirect('/')
+                self.redirect('/')
            
     def get_player(self, player_name):
         """gets player from memcache.  if not in memcache,
@@ -246,17 +251,24 @@ class LoginHandler(webapp2.RequestHandler):
     """ renders login page """
     
     def get(self):
-        user = users.get_current_user()
-        if user:
-            account = Account.get_by_key_name(str(user.nickname))
-            if account is None:
-                self.render_page()
-            else:
-                self.redirect('users/'+str(account.mc_account))
-#                self.render_page(msg="You've already linked an account!", render_form=False, account=account,
-#                                 user=True)
-        else:
-            self.redirect(users.create_login_url(self.request.uri))
+#
+#   TEMPORARY REDIRECT
+#        
+        
+        self.redirect('/')
+        
+        
+#        user = users.get_current_user()
+#        if user:
+#            account = Account.get_by_key_name(str(user.nickname))
+#            if account is None:
+#                self.render_page()
+#            else:
+#                self.redirect('users/'+str(account.mc_account))
+##                self.render_page(msg="You've already linked an account!", render_form=False, account=account,
+##                                 user=True)
+#        else:
+#            self.redirect(users.create_login_url(self.request.uri))
 
     def post(self):
         mc_account = cgi.escape(self.request.get('content')).strip()
@@ -265,20 +277,24 @@ class LoginHandler(webapp2.RequestHandler):
             self.render_page() 
         else:
             if confirm_player(mc_account):
-                user = users.get_current_user()
-                if user:
-                    # update account
-                    account = Account.get_by_key_name(str(user.nickname))
-                    if account is not None:
-                        self.render_page(msg="You've already linked an account!", render_form=False)
-                    else:
-                        p_url = "/users/" + mc_account
-                        add_account(mc_account, str(user.nickname), p_url)
-                        # add user
-                        add_player(mc_account)
-                        self.render_page(msg="Successfully linked.", error=False, p_url=p_url)                     
+                if get_account_assoc(mc_account):
+                    self.render_page(msg=str(mc_account)+""" is already taken!  If you think this is a mistake,
+                                    please contact me on the forums.""", error=True)            
                 else:
-                    self.redirect(users.create_login_url(self.request.uri))                  
+                    user = users.get_current_user()
+                    if user:
+                        # update account
+                        account = Account.get_by_key_name(str(user.nickname))
+                        if account is not None:
+                            self.render_page(msg="You've already linked an account!", render_form=False)
+                        else:
+                            p_url = "/users/" + mc_account
+                            add_account(mc_account, str(user.nickname), p_url)
+                            # add user
+                            add_player(mc_account)
+                            self.render_page(msg="Successfully linked.", error=False, p_url=p_url)                     
+                    else:
+                        self.redirect(users.create_login_url(self.request.uri))                  
             else:
                 self.render_page(msg="Player doesn't exist, you dirty trickster.", error=True)
 
@@ -335,6 +351,16 @@ def add_account(mc_account, nickname, p_url):
     """updates an account"""
     Account().get_or_insert(nickname, mc_account=mc_account, 
                           nickname=nickname, profile_url=p_url)
+    
+def get_account_assoc(mc_account):
+    """checks if mc account is already associated with an email"""
+    q = Account.all()
+    q.filter("mc_account =", mc_account)
+    account = q.get()
+    if account:
+        return True # mc_account is already taken
+    else:
+        return False
     
 def build_rel_times(player):
     """convert UTC time stamps to time elapsed since data collection"""

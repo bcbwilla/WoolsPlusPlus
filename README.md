@@ -6,6 +6,10 @@ it uses jinja2 with bootstrap html/css/javascript templates for displaying. wool
 to collect data from users' profiles at Project Ares and matplotlib to produce the graphs. The project 
 is hosted on Google's App Engine.
 
+--------------------------------------------------------------------
+Setup
+
+To run properly, it requires BeautifulSoup, OcTcProfilerScaper, and twitter bootstrap.
 
 --------------------------------------------------------------------
 
