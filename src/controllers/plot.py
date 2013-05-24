@@ -35,7 +35,6 @@ class Plot:
         self.stats = stats
         self.ylabel = ylabel
         self.title = title
-#        self.rolling = rolling
         
     def plot_regular(self):
         dates = mpl.dates.date2num(self.dates)    
@@ -46,7 +45,6 @@ class Plot:
         # for some reason plot_date is not auto generating new colors for each new function 
         l_c = ['b', 'g', 'r', 'c', 'm', 'y']
         i = 0
-#        r = self.rolling # if a rolling plot, skip the first r entries since they are nonsense.
 
         for stat in self.stats:
             # for plot line colors
@@ -63,7 +61,7 @@ class Plot:
                 return None
   
             plt.plot_date(dates[r:], stat_list[r:], ls='-', linewidth=2, 
-                          label=stat[1], color=l_c[i], markersize=4)
+                          label=stat[1], color=l_c[i])
             i+=1
             self.filename+=stat[0]
         
@@ -104,13 +102,13 @@ class Plot:
         fig.set_size_inches(6,3)
         ax1 = fig.add_subplot(111) 
         
-        ax1.plot_date(dates[r:], rk7[r:], ls='--', linewidth=2, color='c', markersize=4)
-        ax1.plot_date(dates[r:], rd7[r:], ls='--', linewidth=2, color='m', markersize=4)
+        ax1.plot_date(dates[r:], rk7[r:], ls='--', linewidth=2, color='c')
+        ax1.plot_date(dates[r:], rd7[r:], ls='--', linewidth=2, color='m')
         
         fig.autofmt_xdate()
         #two axes
         ax2 = ax1.twinx()
-        ax2.plot_date(dates[r:], rkd7[r:], ls='-', color='y', markersize=4)
+        ax2.plot_date(dates[r:], rkd7[r:], ls='-', color='y')
         
         ax1.legend(['RK7','RD7'], loc=3, prop={'size':9})
         ax2.legend(['RKD7'], loc=4, prop={'size':9})
@@ -129,23 +127,3 @@ class Plot:
         plt.savefig(sio, format="png", dpi=100, transparent=True)
         self.data = sio.getvalue()
         self.filename+='rk7rd7rkd7'
-
-    def put(self):
-        """adds or updates a user's graph"""
-        user = self.player.name
-        filename = self.filename
-        image = self.data
-        if image:
-            g = Graph().get_by_key_name(filename)
-            # see if graph exists
-            if g is None:
-                Graph().get_or_insert(filename,user=user, filename=filename, image=image)
-            else:
-                self.__update_graph(g, image)
-
-
-    @db.transactional
-    def __update_graph(self, graph, image):
-        """updates a user's graph"""
-        graph.image = image
-        graph.put()
