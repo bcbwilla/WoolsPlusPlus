@@ -40,10 +40,6 @@ class UpdateStatsHandler(webapp2.RequestHandler):
         if q != None:
             q = list(q)
             random.shuffle(q)
-            
-            #Get random 20? Meh.
-#            if len(q) > 20:
-#                q = q[:21]
  
             k = 0
             while k < len(q) and not runtime.is_shutting_down():
@@ -208,18 +204,13 @@ graphs_to_update = []
     
 class UpdatePlotsHandler(webapp2.RequestHandler):
     """Updates all player's plots"""
-    
-    
+       
     def get(self):        
         q = Player().all()
         if q != None:
             q = list(q)
             random.shuffle(q)
-            
-            #Get random 20? Meh.
-#            if len(q) > 20:
-#                q = q[:21]
-            
+                       
             # now update everyone's graphs. done separately so a problem with a player's 
             # plots don't stop the rest of the players' stats from being updated.
             k = 0
@@ -243,8 +234,7 @@ class UpdatePlotsHandler(webapp2.RequestHandler):
                 pplot.plot_rk7rd7rkd7()
                 g = Graph(user=pplot.player.name, filename=pplot.filename, image=pplot.data)
                 graphs_to_update.append(g)
-
-                
+              
                 if runtime.is_shutting_down():
                     logging.info('backend runtime is shutting down.')                
                 
