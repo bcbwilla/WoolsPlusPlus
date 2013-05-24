@@ -59,6 +59,11 @@ class AllUsersHandler(webapp2.RequestHandler):
     """ renders the 'all users' page """
 
     def get(self):
+###
+###
+### use memcache here
+###
+###
         player_list = Player.all()  # get all the players to display
         player_list.order("name")
         player_list = list(player_list)
@@ -102,7 +107,7 @@ class MainPage(webapp2.RequestHandler):
             user = True
         else:
             user = False
-        
+                  
         self.render_page(account=account, user=user)
     
     def render_page(self, account=None, user=False, msg=""):       
@@ -125,8 +130,7 @@ class MainPage(webapp2.RequestHandler):
 class ProfileHandler(webapp2.RequestHandler):
     """ render player profile """
     
-    def get(self, player_name):
-        
+    def get(self, player_name):      
         if player_name == '':
             self.redirect('/')
         else:                   
@@ -251,24 +255,18 @@ class LoginHandler(webapp2.RequestHandler):
     """ renders login page """
     
     def get(self):
-#
-#   TEMPORARY REDIRECT
-#        
-        
-        self.redirect('/')
-        
-        
-#        user = users.get_current_user()
-#        if user:
-#            account = Account.get_by_key_name(str(user.nickname))
-#            if account is None:
-#                self.render_page()
-#            else:
-#                self.redirect('users/'+str(account.mc_account))
-##                self.render_page(msg="You've already linked an account!", render_form=False, account=account,
-##                                 user=True)
-#        else:
-#            self.redirect(users.create_login_url(self.request.uri))
+       
+        user = users.get_current_user()
+        if user:
+            account = Account.get_by_key_name(str(user.nickname))
+            if account is None:
+                self.render_page()
+            else:
+                self.redirect('users/'+str(account.mc_account))
+#                self.render_page(msg="You've already linked an account!", render_form=False, account=account,
+#                                 user=True)
+        else:
+            self.redirect(users.create_login_url(self.request.uri))
 
     def post(self):
         mc_account = cgi.escape(self.request.get('content')).strip()
