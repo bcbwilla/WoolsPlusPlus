@@ -12,10 +12,10 @@ handlers:
   static_dir: assets
 - url: /static
   static_dir: static
-- url: /updateschema
+- url: /crons/updatestats
   script: main.app
   login: admin
-- url: /crons/(.*)
+- url: /crons/updateplots
   script: main.app
   login: admin
 - url: /.*
