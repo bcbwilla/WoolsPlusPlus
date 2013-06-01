@@ -61,7 +61,7 @@ class Plot:
                 return None
   
             plt.plot_date(dates[r:], stat_list[r:], ls='-', linewidth=2, 
-                          label=stat[1], color=l_c[i])
+                          label=stat[1], color=l_c[i],ms=0)
             i+=1
             self.filename+=stat[0]
         
@@ -102,13 +102,13 @@ class Plot:
         fig.set_size_inches(6,3)
         ax1 = fig.add_subplot(111) 
         
-        ax1.plot_date(dates[r:], rk7[r:], ls='--', linewidth=2, color='c')
-        ax1.plot_date(dates[r:], rd7[r:], ls='--', linewidth=2, color='m')
+        ax1.plot_date(dates[r:], rk7[r:], ls='--', linewidth=2, color='c',ms=0)
+        ax1.plot_date(dates[r:], rd7[r:], ls='--', linewidth=2, color='m',ms=0)
         
         fig.autofmt_xdate()
         #two axes
         ax2 = ax1.twinx()
-        ax2.plot_date(dates[r:], rkd7[r:], ls='-', color='y')
+        ax2.plot_date(dates[r:], rkd7[r:], ls='-', color='y',ms=0)
         
         ax1.legend(['RK7','RD7'], loc=3, prop={'size':9})
         ax2.legend(['RKD7'], loc=4, prop={'size':9})

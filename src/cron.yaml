@@ -9,5 +9,5 @@ cron:
   target: updateplayers 
 - description: Daily player backup
   url: /_ah/datastore_admin/backup.create?kind=Player
-  schedule: every 24 hours
+  schedule: every monday, thursday 00:00
   target: ah-builtin-python-bundle
