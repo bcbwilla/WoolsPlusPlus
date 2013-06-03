@@ -139,18 +139,7 @@ class ProfileHandler(webapp2.RequestHandler):
             player = self.get_player(player_name)
             
             if player:
-                # images
-                base_img_filename = player_name+'_'
-                # images to display
-                img_urls = [base_img_filename+'kd', 
-                            base_img_filename+'rw7rc7rm7',
-                            base_img_filename+'rk7rd7rkd7']
-                # see what images to display
-                graph_urls = []
-                for img_filename in img_urls:
-                    if imageh.get_image(img_filename) != None:
-                        graph_urls.append("/image?filename="+img_filename)
-    
+  
                 stat_length = len(player.kills)
                 if stat_length >= 1:
                     stat_table_size = 15  #maximum size for stats table
@@ -170,7 +159,7 @@ class ProfileHandler(webapp2.RequestHandler):
                     user=False
                     
                 self.render_page(player, stat_length, stat_table_size, r_stat_table_size,
-                                  graph_urls, config.n_entries, account=account, user=user, p_stats=p_stats)
+                                   config.n_entries, account=account, user=user, p_stats=p_stats)
             else:
                 self.redirect('/')
            
@@ -196,7 +185,13 @@ class ProfileHandler(webapp2.RequestHandler):
         
         def recent_data(l, stat_table_size, r=False):
             if r: # if rolling stat
-                i = l[::-1].index(-1) # find last occurance of -1
+                
+                # get first occurrence that isn't "-1"
+                ri = [j for j,x in enumerate(l) if x != -1]
+                if len(ri) >= 1:
+                    i = ri[0] # index of first good data
+                else: # there's no data to plot
+                    return None
                 l = l[i+1:]  #trim off all "-1" entries so we don't print those
                 
             l_reversed = list(reversed(l))
@@ -216,7 +211,10 @@ class ProfileHandler(webapp2.RequestHandler):
             stat_dict[stat] = recent_data(getattr(player,stat), stat_table_size)
         
         for r_stat in r_stat_types:
-            stat_dict[r_stat] = recent_data(getattr(player,r_stat), stat_table_size, r=True)
+            logging.info('stat='+str(r_stat))
+            ress1 = recent_data(getattr(player,r_stat), stat_table_size, r=True)
+            logging.info('ress='+str(ress1))
+            stat_dict[r_stat] = ress1
                      
         stat_dict['dates'] = recent_data(build_rel_times(player), stat_table_size)
         
@@ -224,7 +222,7 @@ class ProfileHandler(webapp2.RequestHandler):
         
         
     def render_page(self, player, stat_length, stat_table_size, r_stat_table_size,
-                     graph_urls, n_entries, p_stats=None, account=None, user=False):       
+                    n_entries, p_stats=None, account=None, user=False):       
         if account is not None:
             user_profile_url = account.profile_url
         else:
@@ -233,7 +231,6 @@ class ProfileHandler(webapp2.RequestHandler):
         template_values = {
             'page_title': 'Profile',
             'player': player,
-            'graph_urls': graph_urls,
             'stat_table_size': stat_table_size,
             'r_stat_table_size': r_stat_table_size,
             'stat_length': stat_length,

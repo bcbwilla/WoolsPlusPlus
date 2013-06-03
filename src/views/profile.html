@@ -4,121 +4,126 @@
 {% include 'header.html' %}
 
       <div class="jumbotron">
-      	
 		{% if stat_length < 1 %}
  		<div class="alert alert-info">Looks like {{ player.name }} just joined!  There's no data for you to see yet.  Just wait a few hours for 
  			wools++ to work its magic, and then you'll see some cool stuff here.  Check back later!
  		</div>
  		{% else %}		
         <p class="lead"> {{ player.name }}: Status Report</p>
-  <script type="text/javascript" src="http://www.google.com/jsapi"></script>
-  <script type="text/javascript">
-    google.load('visualization', '1', {packages: ['annotatedtimeline']});
-    function drawVisualization() {
-      var data = new google.visualization.DataTable();
-      data.addColumn('date', 'Date');
-      data.addColumn('number', 'KD');
-      data.addRows([
-	{% for date in player.dates %}
-	    {% set d = date %}
-	    [new Date({{ d.year }}, {{ d.month }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
-             {{ player.kd[loop.index0] }}],
-	{% endfor %}
-      ]);
-    
-      var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
-          document.getElementById('kd_chart'));
-      annotatedtimeline.draw(data, {'displayAnnotations': true, 'colors': ['#FF8C00','#0969A2','#00B358']});
-    }
-    
-    google.setOnLoadCallback(drawVisualization);
-  </script>
-<div id="kd_chart" style="width: 700px; height: 350px;"></div>
-<br>
 
-  <script type="text/javascript">
-    google.load('visualization', '1', {packages: ['annotatedtimeline']});
-    function drawVisualization() {
-      var data = new google.visualization.DataTable();
-      data.addColumn('date', 'Date');
-      data.addColumn('number', 'Wools');
-      data.addColumn('number', 'Cores');
-      data.addColumn('number', 'Monuments');
-      data.addRows([
-	{% for date in player.dates %}
-	    {% set d = date %}
-	    [new Date({{ d.year }}, {{ d.month }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
-	     {{ player.wools[loop.index0] }}, {{ player.cores[loop.index0] }}, {{ player.monuments[loop.index0] }}],
-	{% endfor %}
-      ]);
-    
-      var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
-          document.getElementById('objectives_chart'));
-      annotatedtimeline.draw(data, {'displayAnnotations': true, 'colors': ['#FF8C00','#0969A2','#00B358']});
-    }
-    
-    google.setOnLoadCallback(drawVisualization);
-  </script>
-<div id="objectives_chart" style="width: 700px; height: 350px;"></div>
+	  <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 
-<br>
+	  {% if rkd7 != None %}
+
+	<br>
 
 
-  <script type="text/javascript">
-    google.load('visualization', '1', {packages: ['annotatedtimeline']});
-    function drawVisualization() {
-      var data = new google.visualization.DataTable();
-      data.addColumn('date', 'Date');
-      data.addColumn('number', 'KD');
-      data.addColumn('number', 'RKD7');
-      data.addRows([
-	{% for date in player.dates %}
-	    {% set d = date %}
-	    [new Date({{ d.year }}, {{ d.month }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
-             {{ player.kd[loop.index0] }}, {{ player.rkd7[loop.index0] }}],
-	{% endfor %}
-      ]);
-    
-      var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
-          document.getElementById('rkd_chart'));
-      annotatedtimeline.draw(data, {'displayAnnotations': true, 'colors': ['#FF8C00','#0969A2','#00B358']});
-    }
-    
-    google.setOnLoadCallback(drawVisualization);
-  </script>
-<div id="rkd_chart" style="width: 700px; height: 350px;"></div>
+	  <script type="text/javascript">
+	    google.load('visualization', '1', {packages: ['annotatedtimeline']});
+	    function drawVisualization() {
+	      var data = new google.visualization.DataTable();
+	      data.addColumn('date', 'Date');
+	      data.addColumn('number', 'KD');
+	      data.addRows([
+		{% for val in player.rkd7 %}
+		    {% set d = player.dates[loop.index0] %}
+		    [new Date({{ d.year }}, {{ d.month }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
+		     {{ kd[loop.index0] }}],
+		{% endfor %}
+	      ]);
+	    
+	      var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
+		  document.getElementById('rkd_chart'));
+	      annotatedtimeline.draw(data, {'displayAnnotations': true, 'colors': ['#FF8C00','#0969A2','#00B358']});
+	    }
+
+	    google.setOnLoadCallback(drawVisualization);
+	  </script>
+	<div id="rkd_chart" style="width: 700px; height: 350px;"></div>
+	
+	<br>
+
+	  <script type="text/javascript">
+	    google.load('visualization', '1', {packages: ['annotatedtimeline']});
+	    function drawVisualization() {
+	      var data = new google.visualization.DataTable();
+	      data.addColumn('date', 'Date');
+	      data.addColumn('number', 'RW7');
+	      data.addColumn('number', 'RC7');
+	      data.addColumn('number', 'RM7');
+	      data.addRows([
+		{% for val in player.rkd7 %}
+		    {% set d = player.dates[loop.index0] %}
+		    [new Date({{ d.year }}, {{ d.month }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
+		     {{ rw7[loop.index0] }}, {{ rc7[loop.index0] }}, {{ rm7[loop.index0] }}],
+		{% endfor %}
+	      ]);
+	    
+	      var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
+		  document.getElementById('rolling_objectives_chart'));
+	      annotatedtimeline.draw(data, {'displayAnnotations': true, 'colors': ['#FF8C00','#0969A2','#00B358']});
+	    }
+	    
+	    google.setOnLoadCallback(drawVisualization);
+	  </script>
+	<div id="rolling_objectives_chart" style="width: 700px; height: 350px;"></div>
+
+	<br>
+
+	{% else %}
+
+	  <script type="text/javascript">
+	    google.load('visualization', '1', {packages: ['annotatedtimeline']});
+	    function drawVisualization() {
+	      var data = new google.visualization.DataTable();
+	      data.addColumn('date', 'Date');
+	      data.addColumn('number', 'KD');
+	      data.addRows([
+		{% for date in player.dates %}
+		    {% set d = date %}
+		    [new Date({{ d.year }}, {{ d.month }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
+		     {{ kd[loop.index0] }}],
+		{% endfor %}
+	      ]);
+	    
+	      var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
+		  document.getElementById('kd_chart'));
+	      annotatedtimeline.draw(data, {'displayAnnotations': true, 'colors': ['#FF8C00','#0969A2','#00B358']});
+	    }
+	    
+	    google.setOnLoadCallback(drawVisualization);
+	  </script>
+	<div id="kd_chart" style="width: 700px; height: 350px;"></div>
+	<br>
+	{% endif %}
 
 
+	  <script type="text/javascript">
+	    google.load('visualization', '1', {packages: ['annotatedtimeline']});
+	    function drawVisualization() {
+	      var data = new google.visualization.DataTable();
+	      data.addColumn('date', 'Date');
+	      data.addColumn('number', 'Wools');
+	      data.addColumn('number', 'Cores');
+	      data.addColumn('number', 'Monuments');
+	      data.addRows([
+		{% for date in player.dates %}
+		    {% set d = date %}
+		    [new Date({{ d.year }}, {{ d.month }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
+		     {{ wools[loop.index0] }}, {{ cores[loop.index0] }}, {{ monuments[loop.index0] }}],
+		{% endfor %}
+	      ]);
+	    
+	      var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
+		  document.getElementById('objectives_chart'));
+	      annotatedtimeline.draw(data, {'displayAnnotations': true, 'colors': ['#FF8C00','#0969A2','#00B358']});
+	    }
+	    
+	    google.setOnLoadCallback(drawVisualization);
+	  </script>
+	<div id="objectives_chart" style="width: 700px; height: 350px;"></div>
 
 
-<br>
-
-  <script type="text/javascript">
-    google.load('visualization', '1', {packages: ['annotatedtimeline']});
-    function drawVisualization() {
-      var data = new google.visualization.DataTable();
-      data.addColumn('date', 'Date');
-      data.addColumn('number', 'RW7');
-      data.addColumn('number', 'RC7');
-      data.addColumn('number', 'RM7');
-      data.addRows([
-	{% for date in player.dates %}
-	    {% set d = date %}
-	    [new Date({{ d.year }}, {{ d.month }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
-	     {{ player.rw7[loop.index0] }}, {{ player.rc7[loop.index0] }}, {{ player.rm7[loop.index0] }}],
-	{% endfor %}
-      ]);
-    
-      var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
-          document.getElementById('rolling_objectives_chart'));
-      annotatedtimeline.draw(data, {'displayAnnotations': true, 'colors': ['#FF8C00','#0969A2','#00B358']});
-    }
-    
-    google.setOnLoadCallback(drawVisualization);
-  </script>
-<div id="rolling_objectives_chart" style="width: 700px; height: 350px;"></div>
-
-<br>
 		
  		<div class="row">
  	      <br>
