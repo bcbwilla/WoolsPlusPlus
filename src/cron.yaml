@@ -3,10 +3,6 @@ cron:
   url: /crons/updatestats
   schedule: every 6 hours
   target: updateplayers
-- description: Update user plots
-  url: /crons/updateplots
-  schedule: every 12 hours
-  target: updateplayers 
 - description: Daily player backup
   url: /_ah/datastore_admin/backup.create?kind=Player
   schedule: every monday, thursday 00:00
