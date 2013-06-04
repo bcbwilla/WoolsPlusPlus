@@ -17,6 +17,7 @@ contains the cron job that collects data from oc.tc
 
 import webapp2
 from datetime import datetime
+import time
 import logging
 import random
 import urllib
@@ -29,6 +30,7 @@ import pAProfileScraper as pap
 
 from models.models import Player, Graph, Commit
 from config import config
+import pageh
 #from plot import Plot
 
 players_to_update = []
@@ -253,7 +255,7 @@ class UpdatePlotsHandler(webapp2.RequestHandler):
 class UpdateCommits(webapp2.RequestHandler):
     
     def get(self):
-        COMMIT_URL = 'https://api.github.com/repos/bcbwilla/WoolsPlusPlus/commits'
+        COMMIT_URL = 'https://api.github.com/repos/bcbwilla/WoolsPlusPlus/commits?per_page=1000'
         try:
             page = urllib.urlopen(COMMIT_URL)
         except:
@@ -263,14 +265,22 @@ class UpdateCommits(webapp2.RequestHandler):
         page.close()
         commits = eval(html)
         
-        commits_to_commit = []  # lol.
         for commit in commits:
+            sha = commit['sha']
             url = commit['html_url']
             message = commit['commit']['message']
-            date = commit['commit']['committer']['date']
+            d = commit['commit']['committer']['date']
+            d = self.format_commit_date(d)
+            d_string = pageh.convert_time(d)
             committer_name = commit['author']['login']
             committer_url = commit['author']['html_url']
-            pass
-        pass
-    # TODO
+            Commit.get_or_insert(sha, url=url, message=message, date=d, date_string=d_string,
+                                 committer_name=committer_name, committer_url=committer_url)
+
+    def format_commit_date(self, d):
+        # python magic.  BAM!
+        d = time.strptime(" ".join(d.split('T'))[:-1],"%Y-%m-%d %H:%M:%S")
+        return datetime(d.tm_year, d.tm_mon, d.tm_mday, d.tm_hour, d.tm_min,d. tm_sec)
+
+        
 

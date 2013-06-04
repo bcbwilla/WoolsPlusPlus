@@ -25,10 +25,12 @@ logging.getLogger().setLevel(logging.INFO)
 app = webapp2.WSGIApplication([('/', pageh.MainPage), 
                                ('/crons/updatestats', crons.UpdateStatsHandler),
                                ('/crons/updateplots', crons.UpdatePlotsHandler),
+                               ('/crons/updatecommits', crons.UpdateCommits),
                                (r'/users/(.*)', pageh.ProfileHandler),
                                ('/image', imageh.ImageHandler),
                                ('/allusers',pageh.AllUsersHandler),
                                ('/about',pageh.AboutHandler),
-                               ('/login',pageh.LoginHandler)
+                               ('/login',pageh.LoginHandler),
+                               ('/revisions',pageh.RevisionsHandler)
                                ], debug=True)
 

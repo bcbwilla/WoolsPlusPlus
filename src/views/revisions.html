@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+	
+{% include 'header.html' %}
+
+      <div class="jumbotron"> 
+        <p class="lead">Revisions</p>
+        <div class="row">
+        <div class="span7"> 
+
+ 			<table class="table center-table table-hover table-bordered">
+ 			<thead>
+ 			<th> when </th>
+ 			<th> message </th>
+ 			<th> user </th>
+ 			</thead>
+ 			{% for commit in commits_list %}
+			<tr>	
+               <td><a href="{{ commit.url }}"> {{ commit.date_string }} </a></td>
+			   <td> {{ commit.message }} </a></td>
+               <td><a href="{{ commit.committer_url }}"> {{ commit.committer_name }} </a></td>
+			</tr>
+			{% endfor %}
+        </table>
+        </div>
+		</div>
+      </div>
+
+	{% include 'footer.html' %}
+
+  </body>
+</html>

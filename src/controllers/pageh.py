@@ -19,7 +19,7 @@ from datetime import datetime
 
 from google.appengine.api import users, urlfetch, memcache
 
-from models.models import Player, Account
+from models.models import Player, Account, Commit
 from controllers import imageh
 from config import config
 
@@ -96,6 +96,39 @@ class AllUsersHandler(webapp2.RequestHandler):
         }
         template = JINJA_ENVIRONMENT.get_template('allusers.html')
         self.response.write(template.render(template_values))
+ 
+    
+class RevisionsHandler(webapp2.RequestHandler):
+    """ renders the 'revisions' page """
+
+    def get(self):
+        account = get_user_account()
+        if account is not None:
+            user=True
+        else:
+            user=False
+            
+        commits_list = Commit.all()  # get all the commites
+        commits_list.order("-date")
+        commits_list = list(commits_list)
+            
+        self.render_page(commits_list, account=account, user=user)
+    
+    def render_page(self, commits_list, account=None, user=False):     
+        if account is not None:
+            user_profile_url = account.profile_url
+        else:
+            user_profile_url = None
+        
+        template_values = {
+            'page_title': 'Revisions',
+            'logout_url': users.create_logout_url('/'),
+            'user': user,
+            'user_profile_url': user_profile_url,
+            'commits_list': commits_list
+        }
+        template = JINJA_ENVIRONMENT.get_template('revisions.html')
+        self.response.write(template.render(template_values))
     
           
 class MainPage(webapp2.RequestHandler):
@@ -140,6 +173,11 @@ class ProfileHandler(webapp2.RequestHandler):
             
             if player:
                 stat_length = len(player.kills)
+
+                if stat_length >= 1:         
+                    last_update_time = convert_time(player.dates[-1])
+                else:
+                    last_update_time = None 
                 
                 # get index of occurrence of rolling stat that isn't "-1"
                 ri = [j for j,x in enumerate(player.rkd7) if x != -1]
@@ -147,12 +185,7 @@ class ProfileHandler(webapp2.RequestHandler):
                     r_index = ri[0] # index of first good data
                 else: # there's no data to plot
                     r_index = None
-                
-		if stat_length >= 1:         
-                    last_update_time = convert_time(player.dates[-1])
-                else:
-		    last_update_time = None 
-
+            
                 account = get_user_account()
                 if account is not None:
                     user=True
@@ -192,8 +225,8 @@ class ProfileHandler(webapp2.RequestHandler):
 #
 #   check that player.kd is not empty sequence!
 #        min_y = min(player.kd) - 0.1
- 	min_y = 0
-       
+        min_y = 0
+         
         template_values = {
             'page_title': 'Profile',
             'player': player,

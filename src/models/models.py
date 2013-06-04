@@ -61,7 +61,8 @@ class Player(db.Model):
 class Commit(db.Model):
     """Represents a commit"""
     url = db.LinkProperty()
-    message = db.StringProperty()
+    message = db.StringProperty(multiline=True)
     date = db.DateTimeProperty()
+    date_string = db.StringProperty()
     committer_name = db.StringProperty()
     committer_url = db.LinkProperty()
