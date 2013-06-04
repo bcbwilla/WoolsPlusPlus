@@ -147,9 +147,12 @@ class ProfileHandler(webapp2.RequestHandler):
                     r_index = ri[0] # index of first good data
                 else: # there's no data to plot
                     r_index = None
-                         
-                last_update_time = convert_time(player.dates[-1])
-                         
+                
+		if stat_length >= 1:         
+                    last_update_time = convert_time(player.dates[-1])
+                else:
+		    last_update_time = None 
+
                 account = get_user_account()
                 if account is not None:
                     user=True
@@ -180,14 +183,17 @@ class ProfileHandler(webapp2.RequestHandler):
                 return
         
         
-    def render_page(self, player, stat_length, r_index, last_update_time, account=None, user=False):       
+    def render_page(self, player, stat_length, r_index, last_update_time=None, account=None, user=False):       
         if account is not None:
             user_profile_url = account.profile_url
         else:
             user_profile_url = None
         
-        min_y = min(player.kd) - 0.1
-        
+#
+#   check that player.kd is not empty sequence!
+#        min_y = min(player.kd) - 0.1
+ 	min_y = 0
+       
         template_values = {
             'page_title': 'Profile',
             'player': player,
