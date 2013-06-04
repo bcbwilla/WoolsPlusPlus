@@ -132,25 +132,23 @@ class ProfileHandler(webapp2.RequestHandler):
     
     def get(self, player_name):      
         if player_name == '':
-            self.redirect('/')
+            self.redirect('/allusers')
         else:                   
             player_name = player_name.lower()
             
             player = self.get_player(player_name)
             
             if player:
-  
                 stat_length = len(player.kills)
-                if stat_length >= 1:
-                    stat_table_size = 15  #maximum size for stats table
-                    p_stats = self.prepare_player_data(player, stat_table_size)
-                    stat_table_size = len(p_stats['kills'])  #updated size for stats table if p doesn't have enough
-                    r_stat_table_size = len(p_stats['kd'])
-                else:
-                    stat_table_size = 0
-                    stat_table_size = 0
-                    p_stats = None
-                    r_stat_table_size = 0
+                
+                # get index of occurrence of rolling stat that isn't "-1"
+                ri = [j for j,x in enumerate(player.rkd7) if x != -1]
+                if len(ri) >= 1:
+                    r_index = ri[0] # index of first good data
+                else: # there's no data to plot
+                    r_index = None
+                         
+                last_update_time = convert_time(player.dates[-1])
                          
                 account = get_user_account()
                 if account is not None:
@@ -158,8 +156,8 @@ class ProfileHandler(webapp2.RequestHandler):
                 else:
                     user=False
                     
-                self.render_page(player, stat_length, stat_table_size, r_stat_table_size,
-                                   config.n_entries, account=account, user=user, p_stats=p_stats)
+                self.render_page(player, stat_length, r_index, last_update_time,
+                                 account=account, user=user)
             else:
                 self.redirect('/')
            
@@ -180,69 +178,27 @@ class ProfileHandler(webapp2.RequestHandler):
                 return player
             else:
                 return
-            
-    def prepare_player_data(self, player, stat_table_size):
-        
-        def recent_data(l, stat_table_size, r=False):
-            if r: # if rolling stat
-                
-                # get first occurrence that isn't "-1"
-                ri = [j for j,x in enumerate(l) if x != -1]
-                if len(ri) >= 1:
-                    i = ri[0] # index of first good data
-                else: # there's no data to plot
-                    return None
-                l = l[i+1:]  #trim off all "-1" entries so we don't print those
-                
-            l_reversed = list(reversed(l))
-            l_length = len(l)
-            if l_length < stat_table_size:
-                return l_reversed[:l_length+1]
-            else:
-                return l_reversed[:stat_table_size+1]
-
-        stat_types = ['kills','deaths','cores','wools','monuments','objectives',
-                      'kd','wd','cd','md','od']
-        r_stat_types = ['rkd7','rcd7','rwd7','rmd7','rod7',
-                       'rk7','rd7','rc7','rw7','rm7','ro7']
-        
-        stat_dict = {}
-        for stat in stat_types:
-            stat_dict[stat] = recent_data(getattr(player,stat), stat_table_size)
-        
-        for r_stat in r_stat_types:
-            logging.info('stat='+str(r_stat))
-            ress1 = recent_data(getattr(player,r_stat), stat_table_size, r=True)
-            logging.info('ress='+str(ress1))
-            stat_dict[r_stat] = ress1
-                     
-        stat_dict['dates'] = recent_data(build_rel_times(player), stat_table_size)
-        
-        return stat_dict
         
         
-    def render_page(self, player, stat_length, stat_table_size, r_stat_table_size,
-                    n_entries, p_stats=None, account=None, user=False):       
+    def render_page(self, player, stat_length, r_index, last_update_time, account=None, user=False):       
         if account is not None:
             user_profile_url = account.profile_url
         else:
             user_profile_url = None
         
+        min_y = min(player.kd) - 0.1
+        
         template_values = {
             'page_title': 'Profile',
             'player': player,
-            'stat_table_size': stat_table_size,
-            'r_stat_table_size': r_stat_table_size,
             'stat_length': stat_length,
-            'n_entries': n_entries,
             'logout_url': users.create_logout_url('/'),
             'user': user,
-            'user_profile_url': user_profile_url
+            'user_profile_url': user_profile_url,
+            'last_update_time' : last_update_time,
+            'r_index' : r_index,
+            'min_y' : min_y
         }
-        
-        # add stats stuff
-        if p_stats is not None:
-            template_values.update(p_stats)
         
         template = JINJA_ENVIRONMENT.get_template('profile.html')
         self.response.write(template.render(template_values))

@@ -13,10 +13,9 @@
 
 	  <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 
-	  {% if rkd7 != None %}
+	  {% if r_index != None %}
 
 	<br>
-
 
 	  <script type="text/javascript">
 	    google.load('visualization', '1', {packages: ['annotatedtimeline']});
@@ -27,19 +26,19 @@
 	      data.addRows([
 		{% for val in player.rkd7 %}
 		    {% set d = player.dates[loop.index0] %}
-		    [new Date({{ d.year }}, {{ d.month }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
-		     {{ kd[loop.index0] }}],
+		    [new Date({{ d.year }}, {{ d.month-1 }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
+		     {{ player.kd[loop.index0] }}],
 		{% endfor %}
 	      ]);
 	    
 	      var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
 		  document.getElementById('rkd_chart'));
-	      annotatedtimeline.draw(data, {'displayAnnotations': true, 'colors': ['#FF8C00','#0969A2','#00B358']});
+	      annotatedtimeline.draw(data, {'displayAnnotations': true, 'colors': ['#FF8C00','#0969A2','#00B358'],'min':{{ min_y }} });
 	    }
 
 	    google.setOnLoadCallback(drawVisualization);
 	  </script>
-	<div id="rkd_chart" style="width: 700px; height: 350px;"></div>
+	<div id="rkd_chart" style="width: 700px; height: 300px;"></div>
 	
 	<br>
 
@@ -54,19 +53,19 @@
 	      data.addRows([
 		{% for val in player.rkd7 %}
 		    {% set d = player.dates[loop.index0] %}
-		    [new Date({{ d.year }}, {{ d.month }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
-		     {{ rw7[loop.index0] }}, {{ rc7[loop.index0] }}, {{ rm7[loop.index0] }}],
+		    [new Date({{ d.year }}, {{ d.month-1 }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
+		     {{ player.rw7[loop.index0] }}, {{ player.rc7[loop.index0] }}, {{ player.rm7[loop.index0] }}],
 		{% endfor %}
 	      ]);
 	    
 	      var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
 		  document.getElementById('rolling_objectives_chart'));
-	      annotatedtimeline.draw(data, {'displayAnnotations': true, 'colors': ['#FF8C00','#0969A2','#00B358']});
+	      annotatedtimeline.draw(data, {'displayAnnotations':true, 'colors':['#FF8C00','#0969A2','#00B358'], 'min':0});
 	    }
 	    
 	    google.setOnLoadCallback(drawVisualization);
 	  </script>
-	<div id="rolling_objectives_chart" style="width: 700px; height: 350px;"></div>
+	<div id="rolling_objectives_chart" style="width: 700px; height: 300px;"></div>
 
 	<br>
 
@@ -80,23 +79,22 @@
 	      data.addColumn('number', 'KD');
 	      data.addRows([
 		{% for date in player.dates %}
-		    {% set d = date %}
-		    [new Date({{ d.year }}, {{ d.month }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
-		     {{ kd[loop.index0] }}],
+		    {% set d = player.dates[loop.index0] %}
+		    [new Date({{ d.year }}, {{ d.month-1 }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
+		     {{ player.kd[loop.index0] }}],
 		{% endfor %}
 	      ]);
 	    
 	      var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
 		  document.getElementById('kd_chart'));
-	      annotatedtimeline.draw(data, {'displayAnnotations': true, 'colors': ['#FF8C00','#0969A2','#00B358']});
+	      annotatedtimeline.draw(data, {'displayAnnotations':true,'colors':['#FF8C00','#0969A2','#00B358'],'min':{{ min_y }} });
 	    }
 	    
 	    google.setOnLoadCallback(drawVisualization);
 	  </script>
-	<div id="kd_chart" style="width: 700px; height: 350px;"></div>
+	<div id="kd_chart" style="width: 700px; height: 300px;"></div>
 	<br>
 	{% endif %}
-
 
 	  <script type="text/javascript">
 	    google.load('visualization', '1', {packages: ['annotatedtimeline']});
@@ -108,9 +106,9 @@
 	      data.addColumn('number', 'Monuments');
 	      data.addRows([
 		{% for date in player.dates %}
-		    {% set d = date %}
-		    [new Date({{ d.year }}, {{ d.month }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
-		     {{ wools[loop.index0] }}, {{ cores[loop.index0] }}, {{ monuments[loop.index0] }}],
+		    {% set d = player.dates[loop.index0] %}
+		    [new Date({{ d.year }}, {{ d.month-1 }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
+		     {{ player.wools[loop.index0] }}, {{ player.cores[loop.index0] }}, {{ player.monuments[loop.index0] }}],
 		{% endfor %}
 	      ]);
 	    
@@ -121,13 +119,12 @@
 	    
 	    google.setOnLoadCallback(drawVisualization);
 	  </script>
-	<div id="objectives_chart" style="width: 700px; height: 350px;"></div>
-
+	<div id="objectives_chart" style="width: 700px; height: 300px;"></div>
 
 		
  		<div class="row">
  	      <br>
- 		  <p class="lead">Stats last updated {{ dates[0] }}.</p>
+ 		  <p class="lead">Stats last updated {{ last_update_time }}.</p>
                </div>
       {% endif %}
     </div>

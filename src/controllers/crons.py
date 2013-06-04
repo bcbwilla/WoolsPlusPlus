@@ -19,6 +19,7 @@ import webapp2
 from datetime import datetime
 import logging
 import random
+import urllib
 
 from google.appengine.ext import db
 from google.appengine.api import urlfetch_errors
@@ -26,7 +27,7 @@ from google.appengine.api import memcache
 from google.appengine.api import runtime
 import pAProfileScraper as pap
 
-from models.models import Player, Graph
+from models.models import Player, Graph, Commit
 from config import config
 #from plot import Plot
 
@@ -248,3 +249,28 @@ class UpdatePlotsHandler(webapp2.RequestHandler):
 #                 logging.info('memecache flushed')
 #             else:
 #                 logging.error('unable to flush memcache')
+
+class UpdateCommits(webapp2.RequestHandler):
+    
+    def get(self):
+        COMMIT_URL = 'https://api.github.com/repos/bcbwilla/WoolsPlusPlus/commits'
+        try:
+            page = urllib.urlopen(COMMIT_URL)
+        except:
+            return
+        
+        html = page.read()
+        page.close()
+        commits = eval(html)
+        
+        commits_to_commit = []  # lol.
+        for commit in commits:
+            url = commit['html_url']
+            message = commit['commit']['message']
+            date = commit['commit']['committer']['date']
+            committer_name = commit['author']['login']
+            committer_url = commit['author']['html_url']
+            pass
+        pass
+    # TODO
+

@@ -57,3 +57,11 @@ class Player(db.Model):
     rw7 = db.ListProperty(int, default=None)
     rm7 = db.ListProperty(int, default=None)
     ro7 = db.ListProperty(int, default=None)   
+    
+class Commit(db.Model):
+    """Represents a commit"""
+    url = db.LinkProperty()
+    message = db.StringProperty()
+    date = db.DateTimeProperty()
+    committer_name = db.StringProperty()
+    committer_url = db.LinkProperty()
