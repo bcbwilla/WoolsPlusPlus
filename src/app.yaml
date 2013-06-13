@@ -26,8 +26,8 @@ libraries:
   version: latest
 - name: numpy
   version: "latest"
-#- name: matplotlib
-#  version: "latest"
+- name: matplotlib
+  version: "latest"
   
 inbound_services:
 - warmup
