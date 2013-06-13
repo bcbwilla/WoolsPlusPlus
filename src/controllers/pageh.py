@@ -19,7 +19,7 @@ from datetime import datetime
 
 from google.appengine.api import users, urlfetch, memcache
 
-from models.models import Player, Account
+from models.models import Player, Account, Commit
 from controllers import imageh
 from config import config
 
@@ -59,19 +59,27 @@ class AllUsersHandler(webapp2.RequestHandler):
     """ renders the 'all users' page """
 
     def get(self):
-###
-###
-### use memcache here
-###
-###
+
+#         player_list = memcache.get('player_list')
+#         if player_list is not None:
+#             logging.info('got player list from the memcache')
+#         else:
+#             player_list = Player.all()  # get all the players to display
+#             player_list.order("name")
+#             player_list = list(player_list)
+#             if player_list is not None:
+#                 memcache.add('player_list', player_list, 60)
+#                 logging.info('added player_list to the memcache')
+      
         player_list = Player.all()  # get all the players to display
-        player_list.order("name")
-        player_list = list(player_list)
-        
-#        p_name_date = []
-#        for player in player_list:
-#            join_time =  convert_time(player.dates[0])
-#            p_name_date.append((player.name, join_time))
+        p_name_date = []
+        for player in player_list:
+            if player.dates:
+                join_time = convert_time(player.dates[0])
+            else:
+                join_time = "Today"
+                
+            p_name_date.append((player.name, join_time))
         
         account = get_user_account()
         if account is not None:
@@ -79,9 +87,9 @@ class AllUsersHandler(webapp2.RequestHandler):
         else:
             user=False
             
-        self.render_page(player_list, account=account, user=user)
+        self.render_page(player_list, p_name_date, account=account, user=user)
     
-    def render_page(self, player_list, account=None, user=False):     
+    def render_page(self, player_list, p_name_date, account=None, user=False):     
         if account is not None:
             user_profile_url = account.profile_url
         else:
@@ -92,9 +100,43 @@ class AllUsersHandler(webapp2.RequestHandler):
             'logout_url': users.create_logout_url('/'),
             'user': user,
             'user_profile_url': user_profile_url,
-            'player_list': player_list
+            'player_list': player_list,
+            'p_name_date': p_name_date
         }
         template = JINJA_ENVIRONMENT.get_template('allusers.html')
+        self.response.write(template.render(template_values))
+ 
+    
+class RevisionsHandler(webapp2.RequestHandler):
+    """ renders the 'revisions' page """
+
+    def get(self):
+        account = get_user_account()
+        if account is not None:
+            user=True
+        else:
+            user=False
+            
+        commits_list = Commit.all()  # get all the commites
+        commits_list.order("-date")
+        commits_list = list(commits_list)
+            
+        self.render_page(commits_list, account=account, user=user)
+    
+    def render_page(self, commits_list, account=None, user=False):     
+        if account is not None:
+            user_profile_url = account.profile_url
+        else:
+            user_profile_url = None
+        
+        template_values = {
+            'page_title': 'Revisions',
+            'logout_url': users.create_logout_url('/'),
+            'user': user,
+            'user_profile_url': user_profile_url,
+            'commits_list': commits_list
+        }
+        template = JINJA_ENVIRONMENT.get_template('revisions.html')
         self.response.write(template.render(template_values))
     
           
@@ -132,45 +174,35 @@ class ProfileHandler(webapp2.RequestHandler):
     
     def get(self, player_name):      
         if player_name == '':
-            self.redirect('/')
+            self.redirect('/allusers')
         else:                   
             player_name = player_name.lower()
             
             player = self.get_player(player_name)
             
             if player:
-                # images
-                base_img_filename = player_name+'_'
-                # images to display
-                img_urls = [base_img_filename+'kd', 
-                            base_img_filename+'rw7rc7rm7',
-                            base_img_filename+'rk7rd7rkd7']
-                # see what images to display
-                graph_urls = []
-                for img_filename in img_urls:
-                    if imageh.get_image(img_filename) != None:
-                        graph_urls.append("/image?filename="+img_filename)
-    
                 stat_length = len(player.kills)
-                if stat_length >= 1:
-                    stat_table_size = 15  #maximum size for stats table
-                    p_stats = self.prepare_player_data(player, stat_table_size)
-                    stat_table_size = len(p_stats['kills'])  #updated size for stats table if p doesn't have enough
-                    r_stat_table_size = len(p_stats['kd'])
+
+                if stat_length >= 1:         
+                    last_update_time = convert_time(player.dates[-1])
                 else:
-                    stat_table_size = 0
-                    stat_table_size = 0
-                    p_stats = None
-                    r_stat_table_size = 0
-                         
+                    last_update_time = None 
+                
+                # get index of occurrence of rolling stat that isn't "-1"
+                ri = [j for j,x in enumerate(player.rkd7) if x != -1]
+                if len(ri) >= 1:
+                    r_index = ri[0] # index of first good data
+                else: # there's no data to plot
+                    r_index = None
+            
                 account = get_user_account()
                 if account is not None:
                     user=True
                 else:
                     user=False
                     
-                self.render_page(player, stat_length, stat_table_size, r_stat_table_size,
-                                  graph_urls, config.n_entries, account=account, user=user, p_stats=p_stats)
+                self.render_page(player, stat_length, r_index, last_update_time,
+                                 account=account, user=user)
             else:
                 self.redirect('/')
            
@@ -191,61 +223,30 @@ class ProfileHandler(webapp2.RequestHandler):
                 return player
             else:
                 return
-            
-    def prepare_player_data(self, player, stat_table_size):
-        
-        def recent_data(l, stat_table_size, r=False):
-            if r: # if rolling stat
-                i = l[::-1].index(-1) # find last occurance of -1
-                l = l[i+1:]  #trim off all "-1" entries so we don't print those
-                
-            l_reversed = list(reversed(l))
-            l_length = len(l)
-            if l_length < stat_table_size:
-                return l_reversed[:l_length+1]
-            else:
-                return l_reversed[:stat_table_size+1]
-
-        stat_types = ['kills','deaths','cores','wools','monuments','objectives',
-                      'kd','wd','cd','md','od']
-        r_stat_types = ['rkd7','rcd7','rwd7','rmd7','rod7',
-                       'rk7','rd7','rc7','rw7','rm7','ro7']
-        
-        stat_dict = {}
-        for stat in stat_types:
-            stat_dict[stat] = recent_data(getattr(player,stat), stat_table_size)
-        
-        for r_stat in r_stat_types:
-            stat_dict[r_stat] = recent_data(getattr(player,r_stat), stat_table_size, r=True)
-                     
-        stat_dict['dates'] = recent_data(build_rel_times(player), stat_table_size)
-        
-        return stat_dict
         
         
-    def render_page(self, player, stat_length, stat_table_size, r_stat_table_size,
-                     graph_urls, n_entries, p_stats=None, account=None, user=False):       
+    def render_page(self, player, stat_length, r_index, last_update_time=None, account=None, user=False):       
         if account is not None:
             user_profile_url = account.profile_url
         else:
             user_profile_url = None
         
+#
+#   check that player.kd is not empty sequence!
+#        min_y = min(player.kd) - 0.1
+        min_y = 0
+         
         template_values = {
             'page_title': 'Profile',
             'player': player,
-            'graph_urls': graph_urls,
-            'stat_table_size': stat_table_size,
-            'r_stat_table_size': r_stat_table_size,
             'stat_length': stat_length,
-            'n_entries': n_entries,
             'logout_url': users.create_logout_url('/'),
             'user': user,
-            'user_profile_url': user_profile_url
+            'user_profile_url': user_profile_url,
+            'last_update_time' : last_update_time,
+            'r_index' : r_index,
+            'min_y' : min_y
         }
-        
-        # add stats stuff
-        if p_stats is not None:
-            template_values.update(p_stats)
         
         template = JINJA_ENVIRONMENT.get_template('profile.html')
         self.response.write(template.render(template_values))
