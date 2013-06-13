@@ -59,15 +59,19 @@ class AllUsersHandler(webapp2.RequestHandler):
     """ renders the 'all users' page """
 
     def get(self):
-###
-###
-### use memcache here
-###
-###
+
+#         player_list = memcache.get('player_list')
+#         if player_list is not None:
+#             logging.info('got player list from the memcache')
+#         else:
+#             player_list = Player.all()  # get all the players to display
+#             player_list.order("name")
+#             player_list = list(player_list)
+#             if player_list is not None:
+#                 memcache.add('player_list', player_list, 60)
+#                 logging.info('added player_list to the memcache')
+      
         player_list = Player.all()  # get all the players to display
-        player_list.order("name")
-        player_list = list(player_list)
-        
         p_name_date = []
         for player in player_list:
             if player.dates:
