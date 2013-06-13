@@ -9,7 +9,7 @@ cron:
   target: updateplayers
 - description: Update user plots
   url: /crons/updateplots
-  schedule: every 2 hours
+  schedule: every 24 hours
   target: updateplayers
 - description: Daily player backup
   url: /_ah/datastore_admin/backup.create?kind=Player
