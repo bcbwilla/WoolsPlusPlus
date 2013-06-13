@@ -68,10 +68,14 @@ class AllUsersHandler(webapp2.RequestHandler):
         player_list.order("name")
         player_list = list(player_list)
         
-#        p_name_date = []
-#        for player in player_list:
-#            join_time =  convert_time(player.dates[0])
-#            p_name_date.append((player.name, join_time))
+        p_name_date = []
+        for player in player_list:
+            if player.dates:
+                join_time = convert_time(player.dates[0])
+            else:
+                join_time = "Today"
+                
+            p_name_date.append((player.name, join_time))
         
         account = get_user_account()
         if account is not None:
@@ -79,9 +83,9 @@ class AllUsersHandler(webapp2.RequestHandler):
         else:
             user=False
             
-        self.render_page(player_list, account=account, user=user)
+        self.render_page(player_list, p_name_date, account=account, user=user)
     
-    def render_page(self, player_list, account=None, user=False):     
+    def render_page(self, player_list, p_name_date, account=None, user=False):     
         if account is not None:
             user_profile_url = account.profile_url
         else:
@@ -92,7 +96,8 @@ class AllUsersHandler(webapp2.RequestHandler):
             'logout_url': users.create_logout_url('/'),
             'user': user,
             'user_profile_url': user_profile_url,
-            'player_list': player_list
+            'player_list': player_list,
+            'p_name_date': p_name_date
         }
         template = JINJA_ENVIRONMENT.get_template('allusers.html')
         self.response.write(template.render(template_values))

@@ -5,21 +5,19 @@
 
       <div class="jumbotron"> 
         <p class="lead">Who's using <strong>wools++</strong>?</p>
-        <div class="row">
-        <div class="span3 offset2"> 
 
  			<table class="table table-centered table-hover table-bordered">
  			<thead>
  			<th> Player </th>
+            <th> Joined </th>
  			</thead>
- 			{% for player in player_list %}
+ 			{% for p in p_name_date %}
 			<tr>	
-               <td><a href="{{ '/users/'+player.name }}"> {{ player.name }} </a></td>
+               <td><a href="/users/{{ p[0] }}"> {{ p[0] }} </a></td>
+               <td>{{ p[1] }}</td>
 			</tr>
 			{% endfor %}
         </table>
-        </div>
-		</div>
       </div>
 
 	{% include 'footer.html' %}
