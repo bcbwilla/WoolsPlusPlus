@@ -69,6 +69,31 @@
 
 	<br>
 
+	  <script type="text/javascript">
+	    google.load('visualization', '1', {packages: ['annotatedtimeline']});
+	    function drawVisualization() {
+	      var data = new google.visualization.DataTable();
+	      data.addColumn('date', 'Date');
+	      data.addColumn('number', 'RKD7');
+	      data.addRows([
+		{% for val in player.rkd7 %}
+		    {% set d = player.dates[loop.index0] %}
+		    [new Date({{ d.year }}, {{ d.month-1 }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
+		     {{ player.rkd7[loop.index0] }} ],
+		{% endfor %}
+	      ]);
+	    
+	      var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
+		  document.getElementById('rolling_objectives_chart'));
+	      annotatedtimeline.draw(data, {'displayAnnotations':true, 'colors':['#FF8C00','#0969A2','#00B358'], 'min':0});
+	    }
+	    
+	    google.setOnLoadCallback(drawVisualization);
+	  </script>
+	<div id="rolling_objectives_chart" style="width: 700px; height: 300px;"></div>
+
+	<br>
+
 	{% else %}
 
 	  <script type="text/javascript">

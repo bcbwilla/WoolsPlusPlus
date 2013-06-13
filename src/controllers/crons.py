@@ -203,54 +203,54 @@ class UpdateStatsHandler(webapp2.RequestHandler):
         return index
     
 
-graphs_to_update = []
+
     
 class UpdatePlotsHandler(webapp2.RequestHandler):
     """Updates all player's plots"""
-    pass
-#     def get(self):        
-#         q = Player().all()
-#         if q != None:
-#             q = list(q)
-#             random.shuffle(q)
-#                        
-#             # now update everyone's graphs. done separately so a problem with a player's 
-#             # plots don't stop the rest of the players' stats from being updated.
-#             k = 0
-#             while k < len(q) and not runtime.is_shutting_down():
-#             
-# #            for player in q:              
-#                 player = q[k] 
-#                 # Make some graphs
-#                 pplot = Plot(player, stats=[('kd','KD')])
-#                 pplot.plot_regular()
-#                 g = Graph(user=pplot.player.name, filename=pplot.filename, image=pplot.data)
-#                 graphs_to_update.append(g)
-# 
-#                 pplot = Plot(player, stats=[('rw7','RW7'),('rc7', 'RC7'),('rm7','RM7')])
-#                 pplot.plot_regular()
-#                 g = Graph(user=pplot.player.name, filename=pplot.filename, image=pplot.data)
-#                 graphs_to_update.append(g)
-# 
-#                 # plot fancy graph
-#                 pplot = Plot(player)
-#                 pplot.plot_rk7rd7rkd7()
-#                 g = Graph(user=pplot.player.name, filename=pplot.filename, image=pplot.data)
-#                 graphs_to_update.append(g)
-#               
-#                 if runtime.is_shutting_down():
-#                     logging.info('backend runtime is shutting down.')                
-#                 
-#                 k = k + 1
-#                 
-#             db.put(graphs_to_update)
-#             
-#             # flush memcache
-#             flushed = memcache.flush_all()
-#             if flushed:
-#                 logging.info('memecache flushed')
-#             else:
-#                 logging.error('unable to flush memcache')
+
+    def get(self):        
+        q = Player().all()
+        if q != None:
+            q = list(q)
+            random.shuffle(q)
+                        
+            # now update everyone's graphs. done separately so a problem with a player's 
+            # plots don't stop the rest of the players' stats from being updated.
+            k = 0
+            while k < len(q) and not runtime.is_shutting_down():
+             
+#            for player in q:              
+                player = q[k] 
+                # Make some graphs
+                pplot = Plot(player, stats=[('kd','KD')])
+                pplot.plot_regular()
+                Graph.get_or_insert(pplot.filename, user=pplot.player.name, 
+                                    filename=pplot.filename, image=pplot.data)
+ 
+                pplot = Plot(player, stats=[('rw7','RW7'),('rc7', 'RC7'),('rm7','RM7')])
+                pplot.plot_regular()
+                Graph.get_or_insert(pplot.filename, user=pplot.player.name, 
+                                    filename=pplot.filename, image=pplot.data)
+ 
+                # plot fancy graph
+                pplot = Plot(player)
+                pplot.plot_rk7rd7rkd7()
+                Graph.get_or_insert(pplot.filename, user=pplot.player.name, 
+                                    filename=pplot.filename, image=pplot.data)
+               
+                if runtime.is_shutting_down():
+                    logging.info('backend runtime is shutting down.')                
+                 
+                k = k + 1
+                 
+
+             
+            # flush memcache
+            flushed = memcache.flush_all()
+            if flushed:
+                logging.info('memecache flushed')
+            else:
+                logging.error('unable to flush memcache')
 
 class UpdateCommits(webapp2.RequestHandler):
     
