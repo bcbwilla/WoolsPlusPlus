@@ -5,7 +5,7 @@ cron:
   target: updateplayers
 - description: Update commits for revisions page
   url: /crons/updatecommits
-  schedule: every 2 hours
+  schedule: every 12 hours
   target: updateplayers
 - description: Update user plots
   url: /crons/updateplots
