@@ -31,7 +31,7 @@ import pAProfileScraper as pap
 from models.models import Player, Graph, Commit
 from config import config
 import pageh
-#from plot import Plot
+from plot import Plot
 
 players_to_update = []
 
@@ -42,7 +42,6 @@ class UpdateStatsHandler(webapp2.RequestHandler):
         q = Player().all()
         if q != None:
             q = list(q)
-            random.shuffle(q)
  
             k = 0
             while k < len(q) and not runtime.is_shutting_down():
@@ -201,8 +200,6 @@ class UpdateStatsHandler(webapp2.RequestHandler):
             else:
                 index = None
         return index
-    
-
 
     
 class UpdatePlotsHandler(webapp2.RequestHandler):
@@ -212,7 +209,11 @@ class UpdatePlotsHandler(webapp2.RequestHandler):
         q = Player().all()
         if q != None:
             q = list(q)
+
+            # only update 20 random player's graphs to conserve resources
             random.shuffle(q)
+            if len q > 20:
+                q = q[:20]
                         
             # now update everyone's graphs. done separately so a problem with a player's 
             # plots don't stop the rest of the players' stats from being updated.
@@ -242,8 +243,6 @@ class UpdatePlotsHandler(webapp2.RequestHandler):
                     logging.info('backend runtime is shutting down.')                
                  
                 k = k + 1
-                 
-
              
             # flush memcache
             flushed = memcache.flush_all()
