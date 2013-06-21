@@ -1,6 +1,6 @@
   <head>
     <meta charset="utf-8">
-    <title>Increment wools</title>
+    <title>wools++ | {{ page_title }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -9,27 +9,45 @@
     <link href="../assets/vendor/css/bootstrap.css" rel="stylesheet">
     <style type="text/css">
       body {
-        padding-top: 60px;
+        padding-top: 20px;
         padding-bottom: 40px;
       }
-      .sidebar-nav {
-        padding: 9px 0;
+
+      /* Custom container */
+      .container-narrow {
+        margin: 0 auto;
+        max-width: 700px;
+      }
+      .container-narrow > hr {
+        margin: 30px 0;
       }
 
-      @media (max-width: 980px) {
-        /* Enable use of floated navbar text */
-        .navbar-text.pull-right {
-          float: none;
-          padding-left: 5px;
-          padding-right: 5px;
-        }
+      /* Main marketing message and sign up button */
+      .jumbotron {
+        margin: 60px 0;
+        text-align: center;
       }
+      .jumbotron h1 {
+        font-size: 72px;
+        line-height: 1;
+      }
+      .jumbotron .btn {
+        font-size: 21px;
+        padding: 14px 24px;
+      }
+
+      /* Supporting marketing content */
+      .marketing {
+        margin: 60px 0;
+      }
+      .marketing p + h4 {
+        margin-top: 28px;
     </style>
     <link href="../assets/vendor/css/bootstrap-responsive.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
-      <script src="../assets/vendor/js/html5shiv.js"></script>
+      <script src="../assets/js/html5shiv.js"></script>
     <![endif]-->
 
     <!-- Fav and touch icons -->
@@ -39,8 +57,14 @@
                     <link rel="apple-touch-icon-precomposed" href="../assets/vendor/ico/apple-touch-icon-57-precomposed.png">
                                    <link rel="shortcut icon" href="../assets/vendor/ico/favicon.png">
   </head>
+  
+   <body>
+    <div class="container-narrow">
 
-  <body>
+      <div class="masthead">
 
-    {% include 'navbar.html' %}
+      {% include 'navbar.html' %}
 
+        <h3 class="muted">wools++</h3>
+      </div>
+       <hr>

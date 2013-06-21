@@ -1,0 +1,128 @@
+<!-- 			
+ 		<p class="lead">General Stats</p>
+ 			<table class=" table table-hover table-bordered">
+	 			<thead>
+				<th> when </th>
+				<th> kills </th>
+				<th> deaths </th>
+				<th> wools </th>
+				<th> cores </th>
+				<th> monuments </th>
+				<th> objectives </th>
+				</thead>
+				{% for i in range(stat_table_size) %}		
+				<tr>						
+					<td> {{ dates[loop.index0] }} </td>
+					<td> {{ kills[loop.index0] }} </td>
+					<td> {{ deaths[loop.index0] }} </td>
+					<td> {{ wools[loop.index0] }} </td>
+					<td> {{ cores[loop.index0] }} </td>
+					<td> {{ monuments[loop.index0] }} </td>
+					<td> {{ objectives[loop.index0] }} </td>
+				</tr>
+				{% endfor %}
+        	</table>
+
+ 		<p class="lead">Stats / Deaths</p>
+ 			<table class=" table table-hover table-bordered">
+	 			<thead>
+				<th> when </th>
+				<th> kd </th>
+				<th> wd </th>
+				<th> cd </th>
+				<th> md </th>
+				<th> od </th>
+				</thead>
+				{% for i in range(stat_table_size) %}		
+				<tr>				
+					<td> {{ dates[loop.index0] }} </td>
+					<td> {{ '%.4f' % kd[loop.index0] }} </td>  
+					<td> {{ '%.4f' % wd[loop.index0] }} </td>
+					<td> {{ '%.4f' % cd[loop.index0] }} </td>
+					<td> {{ '%.4f' % md[loop.index0] }} </td>
+					<td> {{ '%.4f' % od[loop.index0] }} </td>
+				</tr>
+			{% endfor %}
+        	</table>
+        
+         <p class="lead">Rolling Stats</p>
+               
+        {% if stat_length <= n_entries %}  
+ 		<div class="alert alert-info">You don't have enough data yet to produce any rolling stats.  Check back later!</div>
+ 		{% else %}       
+         
+ 			<table class=" table table-hover table-bordered">
+	 			<thead>
+				<th> when </th>
+				<th> rk7 </th>
+				<th> rd7 </th>
+				<th> rw7 </th>
+				<th> rc7 </th>
+				<th> rm7 </th>
+				<th> ro7 </th>
+				</thead>
+				{% for i in range(stat_table_size) %}						
+					<td> {{ dates[loop.index0]}} </td>
+					<td> {{ rk7[loop.index0] }} </td>
+					<td> {{ rd7[loop.index0] }} </td>
+					<td> {{ rw7[loop.index0] }} </td>
+					<td> {{ rc7[loop.index0] }} </td>
+					<td> {{ rm7[loop.index0] }} </td>
+					<td> {{ ro7[loop.index0] }} </td>
+				</tr>
+			{% endfor %}
+        	</table>
+        	
+ 		<p class="lead">Rolling Stats / Deaths</p>
+ 			<table class=" table table-hover table-bordered">
+	 			<thead>
+				<th> when </th>
+				<th> rkd7 </th>
+				<th> rwd7 </th>
+				<th> rcd7 </th>
+				<th> rmd7 </th>
+				<th> rod7 </th>
+				</thead>
+				{% for i in range(stat_table_size) %}		
+				<tr>	
+					<td> {{ dates[loop.index0] }} </td>
+					<td> {{ '%.4f' % rkd7[loop.index0] }} </td>
+					<td> {{ '%.4f' % rwd7[loop.index0] }} </td>
+					<td> {{ '%.4f' % rcd7[loop.index0] }} </td>
+					<td> {{ '%.4f' % rmd7[loop.index0] }} </td>
+					<td> {{ '%.4f' % rod7[loop.index0] }} </td>
+				</tr>
+			{% endfor %}
+        	</table>
+        {% endif %}
+        
+        <br>
+        <br>
+        This is just for debugging, so you can ignore it if you want to.  Lemme know if ya see any bugs.
+ 			<table class=" table table-hover table-bordered">	
+			<tr>							
+				<td> {{ player.dates | length }} </td>
+				<td> {{ player.kills | length }} </td>
+				<td> {{ player.deaths | length }} </td>
+				<td> {{ player.wools | length }} </td>
+				<td> {{ player.cores | length }} </td>
+				<td> {{ player.monuments | length }} </td>
+				<td> {{ player.objectives | length}} </td>
+				<td> {{ player.kd | length }} </td>
+				<td> {{ player.wd | length }} </td>
+				<td> {{ player.cd | length }} </td>
+				<td> {{ player.md | length }} </td>
+				<td> {{ player.od | length}} </td>
+				<td> {{ player.rk7 | length }} </td>
+				<td> {{ player.rd7 | length }} </td>
+				<td> {{ player.rw7 | length }} </td>
+				<td> {{ player.rc7 | length }} </td>
+				<td> {{ player.rm7 | length }} </td>
+				<td> {{ player.ro7 | length}} </td>
+				<td> {{ player.rkd7 | length }} </td>
+				<td> {{ player.rwd7 | length }} </td>
+				<td> {{ player.rcd7 | length }} </td>
+				<td> {{ player.rmd7 | length }} </td>
+				<td> {{ player.rod7 | length}} </td>
+			</tr>
+        </table>      -->   
