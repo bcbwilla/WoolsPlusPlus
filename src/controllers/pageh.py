@@ -133,7 +133,9 @@ class RevisionsHandler(webapp2.RequestHandler):
 
     def get(self):
 
-        page = self.request.get('page')
+        self.redirect('/')
+
+        """page = self.request.get('page')
         if not page or page < 1:
             page = 1
         page = int(page)
@@ -152,7 +154,12 @@ class RevisionsHandler(webapp2.RequestHandler):
         count = q.count() // REVISIONS_PER_PAGE + 1 # page count
         commits_list = list(q.run(offset=offset,limit=REVISIONS_PER_PAGE))
 
-        self.render_page(commits_list, page, count, account=account, user=user)
+        # convert commit date to relative date
+        for i in range(commits_list):
+            commits_list[i].date_str = convert_time(commits_list[i].date)
+
+        self.render_page(commits_list, page, count, account=account, user=user)"""
+        pass
     
     def render_page(self, commits_list, page, count, account=None, user=False):     
         if account is not None:
