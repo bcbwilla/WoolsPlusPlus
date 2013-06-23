@@ -207,8 +207,11 @@ class MainPage(webapp2.RequestHandler):
 class StatsHandler(webapp2.RequestHandler):
     """ render player profile """
     
-    def get(self):         
-        page = self.request.get('page')    
+    def get(self):  
+        self.redirect('/')
+       
+
+        """page = self.request.get('page')    
         account = get_user_account()
         if account is not None:
             user=True
@@ -252,7 +255,8 @@ class StatsHandler(webapp2.RequestHandler):
         q.order("-date")
         hists['monuments_hist'] = q.get()
             
-        self.render_page(page, s, hists, account=account, user=user)
+        self.render_page(page, s, hists, account=account, user=user)"""
+        pass
               
         
     def render_page(self, page, stats, hists, account=None, user=False):       

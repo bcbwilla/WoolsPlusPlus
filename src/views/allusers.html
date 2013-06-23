@@ -19,7 +19,6 @@
               <th> <a href="/allusers?page={{ page }}&sort=wools">Wools</a> </th>
 		      <th> <a href="/allusers?page={{ page }}&sort=cores">Cores</a> </th>
               <th> <a href="/allusers?page={{ page }}&sort=monuments">Monuments</a> </th>
-              <th> <a href="/allusers?page={{ page }}&sort=date">Joined</a> </th>
 		    </thead>
 		    {% for p in player_list %}
 	          <tr>	
@@ -31,7 +30,6 @@
                  <td>{{ p.wools }}</td>
                  <td>{{ p.cores }}</td>
                  <td>{{ p.monuments }}</td>
-                 <td>{{ p.date_str}}</td>
 	          </tr>
 	        {% endfor %}
           </table>

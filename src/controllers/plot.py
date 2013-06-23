@@ -19,9 +19,9 @@ import cStringIO
 import logging
 
 from google.appengine.ext import db
-#import matplotlib.pyplot as plt
-#import matplotlib as mpl
-#from pylab import ScalarFormatter
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+from pylab import ScalarFormatter
 
 from models.models import Graph
 
