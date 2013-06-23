@@ -254,9 +254,12 @@
                 data.addColumn('number', 'RKD7');
                 data.addRows([
               {% for val in player.rkd7 %}
+                  {% if player.rkd7[loop.index0] != -1 %}
                   {% set d = player.dates[loop.index0] %}
                   [new Date({{ d.year }}, {{ d.month-1 }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
                    {{ player.rkd7[loop.index0] }} ],
+                  {% else %}
+                  {% endif %}
               {% endfor %}
                 ]);
                 
@@ -290,9 +293,12 @@
                 data.addColumn('number', 'RM7');
                 data.addRows([
               {% for val in player.rkd7 %}
+                  {% if player.rw7[loop.index0] != -1 %}
                   {% set d = player.dates[loop.index0] %}
                   [new Date({{ d.year }}, {{ d.month-1 }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
                    {{ player.rw7[loop.index0] }}, {{ player.rc7[loop.index0] }}, {{ player.rm7[loop.index0] }}],
+                  {% else %}
+                  {% endif %}
               {% endfor %}
                 ]);
                 
