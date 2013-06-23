@@ -90,7 +90,6 @@ class Commit(db.Model):
     url = db.LinkProperty()
     message = db.StringProperty(multiline=True)
     date = db.DateTimeProperty()
-    date_string = db.StringProperty()
     committer_name = db.StringProperty()
     committer_url = db.LinkProperty()
 

@@ -371,10 +371,9 @@ class UpdateCommits(webapp2.RequestHandler):
             message = commit['commit']['message']
             d = commit['commit']['committer']['date']
             d = self.format_commit_date(d)
-            d_string = pageh.convert_time(d)
             committer_name = commit['author']['login']
             committer_url = commit['author']['html_url']
-            Commit.get_or_insert(sha, url=url, message=message, date=d, date_string=d_string,
+            Commit.get_or_insert(sha, url=url, message=message, date=d,
                                  committer_name=committer_name, committer_url=committer_url)
 
     def format_commit_date(self, d):
