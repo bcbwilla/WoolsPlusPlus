@@ -15,7 +15,7 @@
             </thead>
             {% for commit in commits_list %}
                 <tr>	
-                   <td><a href="{{ commit.url }}"> {{ commit.date_string }} </a></td>
+                   <td><a href="{{ commit.url }}"> {{ commit.date_str }} </a></td>
 	               <td> {{ commit.message }} </a></td>
                    <td><a href="{{ commit.committer_url }}"> {{ commit.committer_name }} </a></td>
 			    </tr>
