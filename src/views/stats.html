@@ -91,6 +91,40 @@
                   function drawVisualization() {
                     // Create and populate the data table.
                     var data = google.visualization.arrayToDataTable([
+                      ['KD', ''],
+                  {% for i in kd_1std_hist.y %}
+                  {% if kd_1std_hist.x[loop.index] > 0 %}
+                      ['{{ kd_1std_hist.x[loop.index] | round(2) }}', {{ kd_1std_hist.y[loop.index0] }}],
+                  {% else %}
+                  {% endif %}
+                  {% endfor %}
+                    ]);
+                  
+                    // Create and draw the visualization.
+                    new google.visualization.ColumnChart(document.getElementById('kd_1std_hist')).
+                        draw(data,
+                             {title:"Distribution of KD",
+                              hAxis: {title: "KD",showTextEvery: 7},
+                              vAxis: {title: "Count"},
+                              bar:  {groupWidth:"100%"},
+                              legend: {position: 'none'},
+                              colors:['#00B358']}
+                        );
+                  }
+                  
+                  google.setOnLoadCallback(drawVisualization);
+                </script>
+                <div id="kd_1std_hist" style="width: 100%; height: 400px;"></div>
+
+                <br>
+
+                <script type="text/javascript">
+                  google.load('visualization', '1', {packages: ['corechart']});
+                </script>
+                <script type="text/javascript">
+                  function drawVisualization() {
+                    // Create and populate the data table.
+                    var data = google.visualization.arrayToDataTable([
                       ['Kills', ''],
                   {% for i in kills_hist.y %}
                       ['{{ kills_hist.x[loop.index] | int }}', {{ kills_hist.y[loop.index0] }}],
@@ -122,6 +156,37 @@
                   function drawVisualization() {
                     // Create and populate the data table.
                     var data = google.visualization.arrayToDataTable([
+                      ['Kills', ''],
+                  {% for i in kills_1std_hist.y %}
+                      ['{{ kills_1std_hist.x[loop.index] | int }}', {{ kills_1std_hist.y[loop.index0] }}],
+                  {% endfor %}
+                    ]);
+                  
+                    // Create and draw the visualization.
+                    new google.visualization.ColumnChart(document.getElementById('kills_1std_hist')).
+                        draw(data,
+                             {title:"Distribution of Kills",
+                              hAxis: {title: "Kills",showTextEvery: 8},
+                              vAxis: {title: "Count"},
+                              bar:  {groupWidth:"100%"},
+                              legend: {position: 'none'},
+                              colors:['#802c59']}
+                        );
+                  }
+                  
+                  google.setOnLoadCallback(drawVisualization);
+                </script>
+                <div id="kills_1std_hist" style="width: 100%; height: 400px;"></div>
+
+                <br>
+
+                <script type="text/javascript">
+                  google.load('visualization', '1', {packages: ['corechart']});
+                </script>
+                <script type="text/javascript">
+                  function drawVisualization() {
+                    // Create and populate the data table.
+                    var data = google.visualization.arrayToDataTable([
                       ['Deaths', ''],
                   {% for i in deaths_hist.y %}
                       ['{{ deaths_hist.x[loop.index] | int }}', {{ deaths_hist.y[loop.index0] }}],
@@ -143,6 +208,37 @@
                   google.setOnLoadCallback(drawVisualization);
                 </script>
                 <div id="deaths_hist" style="width: 100%; height: 400px;"></div>
+
+                <br>
+
+                <script type="text/javascript">
+                  google.load('visualization', '1', {packages: ['corechart']});
+                </script>
+                <script type="text/javascript">
+                  function drawVisualization() {
+                    // Create and populate the data table.
+                    var data = google.visualization.arrayToDataTable([
+                      ['Deaths', ''],
+                  {% for i in deaths_1std_hist.y %}
+                      ['{{ deaths_1std_hist.x[loop.index] | int }}', {{ deaths_1std_hist.y[loop.index0] }}],
+                  {% endfor %}
+                    ]);
+                  
+                    // Create and draw the visualization.
+                    new google.visualization.ColumnChart(document.getElementById('deaths_1std_hist')).
+                        draw(data,
+                             {title:"Distribution of Deaths",
+                              hAxis: {title: "Deaths",showTextEvery: 8},
+                              vAxis: {title: "Count"},
+                              bar:  {groupWidth:"100%"},
+                              legend: {position: 'none'},
+                              colors:['#dd4814']}
+                        );
+                  }
+                  
+                  google.setOnLoadCallback(drawVisualization);
+                </script>
+                <div id="deaths_1std_hist" style="width: 100%; height: 400px;"></div>
 
                 <br>
 
@@ -256,8 +352,42 @@
                   function drawVisualization() {
                     // Create and populate the data table.
                     var data = google.visualization.arrayToDataTable([
+                      ['Wools', ''],
+                  {% for i in wools_1std_hist.y %}
+                  {% if wools_1std_hist.x[loop.index] > 0: %}
+                      ['{{ wools_1std_hist.x[loop.index] | int }}', {{ wools_1std_hist.y[loop.index0] }}],
+                  {% else %}
+                  {% endif %}
+                  {% endfor %}
+                    ]);
+                  
+                    // Create and draw the visualization.
+                    new google.visualization.ColumnChart(document.getElementById('wools_1std_hist')).
+                        draw(data,
+                             {title:"Distribution of Wools",
+                              hAxis: {title: "Wools",showTextEvery: 5},
+                              vAxis: {title: "Count"},
+                              bar:  {groupWidth:"100%"},
+                              legend: {position: 'none'},
+                              colors:['#00B358']}
+                        );
+                  }
+                  
+                  google.setOnLoadCallback(drawVisualization);
+                </script>
+                <div id="wools_1std_hist" style="width: 100%; height: 400px;"></div>
+
+                <br>
+
+                <script type="text/javascript">
+                  google.load('visualization', '1', {packages: ['corechart']});
+                </script>
+                <script type="text/javascript">
+                  function drawVisualization() {
+                    // Create and populate the data table.
+                    var data = google.visualization.arrayToDataTable([
                       ['Cores', ''],
-                  {% for i in deaths_hist.y %}
+                  {% for i in cores_hist.y %}
                       ['{{ cores_hist.x[loop.index] | int }}', {{ cores_hist.y[loop.index0] }}],
                   {% endfor %}
                     ]);
@@ -277,6 +407,40 @@
                   google.setOnLoadCallback(drawVisualization);
                 </script>
                 <div id="cores_hist" style="width: 100%; height: 400px;"></div>
+
+                <br>
+
+                <script type="text/javascript">
+                  google.load('visualization', '1', {packages: ['corechart']});
+                </script>
+                <script type="text/javascript">
+                  function drawVisualization() {
+                    // Create and populate the data table.
+                    var data = google.visualization.arrayToDataTable([
+                      ['Cores', ''],
+                  {% for i in cores_1std_hist.y %}
+                  {% if cores_1std_hist.x[loop.index] > 0: %}
+                      ['{{ cores_1std_hist.x[loop.index] | int }}', {{ cores_1std_hist.y[loop.index0] }}],
+                  {% else %}
+                  {% endif %}
+                  {% endfor %}
+                    ]);
+                  
+                    // Create and draw the visualization.
+                    new google.visualization.ColumnChart(document.getElementById('cores_1std_hist')).
+                        draw(data,
+                             {title:"Distribution of Cores",
+                              hAxis: {title: "Cores",showTextEvery: 5},
+                              vAxis: {title: "Count"},
+                              bar:  {groupWidth:"100%"},
+                              legend: {position: 'none'},
+                              colors:['#dd4814']}
+                        );
+                  }
+                  
+                  google.setOnLoadCallback(drawVisualization);
+                </script>
+                <div id="cores_1std_hist" style="width: 100%; height: 400px;"></div>
 
                 <br>
 
@@ -308,6 +472,40 @@
                   google.setOnLoadCallback(drawVisualization);
                 </script>
                 <div id="monuments_hist" style="width: 100%; height: 400px;"></div>
+
+                <br>
+
+                <script type="text/javascript">
+                  google.load('visualization', '1', {packages: ['corechart']});
+                </script>
+                <script type="text/javascript">
+                  function drawVisualization() {
+                    // Create and populate the data table.
+                    var data = google.visualization.arrayToDataTable([
+                      ['Monuments', ''],
+                  {% for i in monuments_1std_hist.y %}
+                  {% if wools_1std_hist.x[loop.index] > 0: %}
+                      ['{{ monuments_1std_hist.x[loop.index] | int }}', {{ monuments_1std_hist.y[loop.index0] }}],
+                  {% else %}
+                  {% endif %}
+                  {% endfor %}
+                    ]);
+                  
+                    // Create and draw the visualization.
+                    new google.visualization.ColumnChart(document.getElementById('monuments_1std_hist')).
+                        draw(data,
+                             {title:"Distribution of Monuments",
+                              hAxis: {title: "Monuments",showTextEvery: 5},
+                              vAxis: {title: "Count"},
+                              bar:  {groupWidth:"100%"},
+                              legend: {position: 'none'},
+                              colors:['#802c59']}
+                        );
+                  }
+                  
+                  google.setOnLoadCallback(drawVisualization);
+                </script>
+                <div id="monuments_1std_hist" style="width: 100%; height: 400px;"></div>
 
                 <br>
 
