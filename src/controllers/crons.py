@@ -285,7 +285,7 @@ class UpdateStatsHandler(webapp2.RequestHandler):
 
 
 
-            y,x = numpy.histogram(stat_ary,bins=bins,range=h_range)
+            y,x = numpy.histogram(stat_ary,bins=bins,range=h_range,density=True)
             y,x = y.tolist(),x.tolist()
             # convert all elements to float because GAE doesn't like numpy floats.
             x = [ float(xi) for xi in x ]

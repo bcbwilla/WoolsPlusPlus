@@ -225,6 +225,7 @@ class StatsHandler(webapp2.RequestHandler):
 
         hists = {}
 
+# TODO: put in fxn that also uses memcache
         q = Histogram.all()  
         q.filter("name =", "kd")
         q.order("-date")
@@ -254,6 +255,37 @@ class StatsHandler(webapp2.RequestHandler):
         q.filter("name =", "monuments")
         q.order("-date")
         hists['monuments_hist'] = q.get()
+
+
+        q = Histogram.all()  
+        q.filter("name =", "kd_1std")
+        q.order("-date")
+        hists['kd_1std_hist'] = q.get()
+
+        q = Histogram.all()  
+        q.filter("name =", "kills_1std")
+        q.order("-date")
+        hists['kills_1std_hist'] = q.get()
+
+        q = Histogram.all()  
+        q.filter("name =", "deaths_1std")
+        q.order("-date")
+        hists['deaths_1std_hist'] = q.get()
+
+        q = Histogram.all()  
+        q.filter("name =", "wools_1std")
+        q.order("-date")
+        hists['wools_1std_hist'] = q.get()
+
+        q = Histogram.all()  
+        q.filter("name =", "cores_1std")
+        q.order("-date")
+        hists['cores_1std_hist'] = q.get()
+
+        q = Histogram.all()  
+        q.filter("name =", "monuments_1std")
+        q.order("-date")
+        hists['monuments_1std_hist'] = q.get()
             
         self.render_page(page, s, hists, account=account, user=user)
               
