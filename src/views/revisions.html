@@ -3,9 +3,11 @@
 	
 {% include 'header.html' %}
 
-      <div class="jumbotron"> 
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span8 offset2">
         <p class="lead">Revisions</p>
-            <table class="table table-hover table-bordered">
+        <table class="table table-hover table-bordered">
             <thead>
             <th width="15%"> when </th>
             <th width="75%"> message </th>
@@ -19,7 +21,9 @@
 			    </tr>
 			{% endfor %}
         </table>
-      </div>
+        {% include 'pagination.html' %}
+        </div><!--/span-->
+      </div><!--/row-->
 
 	{% include 'footer.html' %}
 

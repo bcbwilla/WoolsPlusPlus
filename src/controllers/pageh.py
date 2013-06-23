@@ -19,7 +19,7 @@ from datetime import datetime
 
 from google.appengine.api import users, urlfetch, memcache
 
-from models.models import Player, Account, Commit
+from models.models import Player, Account, Commit, RecentStats, Histogram, ServerStats
 from controllers import imageh
 from config import config
 
@@ -59,7 +59,6 @@ class AllUsersHandler(webapp2.RequestHandler):
     """ renders the 'all users' page """
 
     def get(self):
-
 #         player_list = memcache.get('player_list')
 #         if player_list is not None:
 #             logging.info('got player list from the memcache')
@@ -71,15 +70,33 @@ class AllUsersHandler(webapp2.RequestHandler):
 #                 memcache.add('player_list', player_list, 60)
 #                 logging.info('added player_list to the memcache')
       
-        player_list = Player.all()  # get all the players to display
-        p_name_date = []
-        for player in player_list:
-            if player.dates:
-                join_time = convert_time(player.dates[0])
+        page = self.request.get('page')
+        sort = self.request.get('sort')
+    
+        if not sort:
+            sort = 'kills'
+        if not page or page < 1:
+            page = 1
+        page = int(page)
+
+        PLAYERS_PER_PAGE = 20
+        offset = (page-1)*PLAYERS_PER_PAGE
+
+        q = RecentStats.all()  # get all the recent stats
+        count = q.count() // PLAYERS_PER_PAGE + 1 # page count
+        q.order('-'+str(sort))
+        player_list = list(q.run(offset=offset,limit=PLAYERS_PER_PAGE))
+
+        # convert join date to relative string
+        for i in range(len(player_list)):
+            p = player_list[i]
+            if p.date:
+                join_time = convert_time(p.date)
             else:
                 join_time = "Today"
-                
-            p_name_date.append((player.name, join_time))
+
+            p.date_str = join_time            
+            player_list[i] =  p
         
         account = get_user_account()
         if account is not None:
@@ -87,10 +104,10 @@ class AllUsersHandler(webapp2.RequestHandler):
         else:
             user=False
             
-        self.render_page(player_list, p_name_date, account=account, user=user)
+        self.render_page(player_list, page, sort, count, PLAYERS_PER_PAGE, account=account, user=user)
     
-    def render_page(self, player_list, p_name_date, account=None, user=False):     
-        if account is not None:
+    def render_page(self, player_list, page, sort, count, p_per_page, account=None, user=False):     
+        if account is not None: 
             user_profile_url = account.profile_url
         else:
             user_profile_url = None
@@ -101,7 +118,11 @@ class AllUsersHandler(webapp2.RequestHandler):
             'user': user,
             'user_profile_url': user_profile_url,
             'player_list': player_list,
-            'p_name_date': p_name_date
+            'page': page,
+            'sort': sort,
+            'count': count,
+            'p_per_page': p_per_page,
+            'base_url': '/allusers'
         }
         template = JINJA_ENVIRONMENT.get_template('allusers.html')
         self.response.write(template.render(template_values))
@@ -111,19 +132,29 @@ class RevisionsHandler(webapp2.RequestHandler):
     """ renders the 'revisions' page """
 
     def get(self):
+
+        page = self.request.get('page')
+        if not page or page < 1:
+            page = 1
+        page = int(page)
+
+        REVISIONS_PER_PAGE = 10
+        offset = (page-1)*REVISIONS_PER_PAGE
+
         account = get_user_account()
         if account is not None:
             user=True
         else:
             user=False
             
-        commits_list = Commit.all()  # get all the commites
-        commits_list.order("-date")
-        commits_list = list(commits_list)
-            
-        self.render_page(commits_list, account=account, user=user)
+        q = Commit.all()  # get all the commites
+        q.order("-date")
+        count = q.count() // REVISIONS_PER_PAGE + 1 # page count
+        commits_list = list(q.run(offset=offset,limit=REVISIONS_PER_PAGE))
+
+        self.render_page(commits_list, page, count, account=account, user=user)
     
-    def render_page(self, commits_list, account=None, user=False):     
+    def render_page(self, commits_list, page, count, account=None, user=False):     
         if account is not None:
             user_profile_url = account.profile_url
         else:
@@ -134,7 +165,11 @@ class RevisionsHandler(webapp2.RequestHandler):
             'logout_url': users.create_logout_url('/'),
             'user': user,
             'user_profile_url': user_profile_url,
-            'commits_list': commits_list
+            'commits_list': commits_list,
+            'page': page,
+            'count': count,
+            'base_url': '/revisions',
+            'sort': 'date'
         }
         template = JINJA_ENVIRONMENT.get_template('revisions.html')
         self.response.write(template.render(template_values))
@@ -167,7 +202,77 @@ class MainPage(webapp2.RequestHandler):
         }
         template = JINJA_ENVIRONMENT.get_template('index.html')
         self.response.write(template.render(template_values))
+
+
+class StatsHandler(webapp2.RequestHandler):
+    """ render player profile """
     
+    def get(self):         
+        page = self.request.get('page')    
+        account = get_user_account()
+        if account is not None:
+            user=True
+        else:
+            user=False
+
+        q = ServerStats.all() 
+        q.order("-date")
+        s = q.get()
+
+
+        hists = {}
+
+        q = Histogram.all()  
+        q.filter("name =", "kd")
+        q.order("-date")
+        hists['kd_hist'] = q.get()
+
+        q = Histogram.all()  
+        q.filter("name =", "kills")
+        q.order("-date")
+        hists['kills_hist'] = q.get()
+
+        q = Histogram.all()  
+        q.filter("name =", "deaths")
+        q.order("-date")
+        hists['deaths_hist'] = q.get()
+
+        q = Histogram.all()  
+        q.filter("name =", "wools")
+        q.order("-date")
+        hists['wools_hist'] = q.get()
+
+        q = Histogram.all()  
+        q.filter("name =", "cores")
+        q.order("-date")
+        hists['cores_hist'] = q.get()
+
+        q = Histogram.all()  
+        q.filter("name =", "monuments")
+        q.order("-date")
+        hists['monuments_hist'] = q.get()
+            
+        self.render_page(page, s, hists, account=account, user=user)
+              
+        
+    def render_page(self, page, stats, hists, account=None, user=False):       
+        if account is not None:
+            user_profile_url = account.profile_url
+        else:
+            user_profile_url = None
+
+         
+        template_values = {
+            'page_title': 'Stats',
+            's': stats,
+            'page': page
+        }
+        template_values.update(hists)
+        
+        template = JINJA_ENVIRONMENT.get_template('stats.html')
+        self.response.write(template.render(template_values))    
+
+
     
 class ProfileHandler(webapp2.RequestHandler):
     """ render player profile """
@@ -176,8 +281,8 @@ class ProfileHandler(webapp2.RequestHandler):
         if player_name == '':
             self.redirect('/allusers')
         else:                   
+            page = self.request.get('page')
             player_name = player_name.lower()
-            
             player = self.get_player(player_name)
             
             if player:
@@ -201,7 +306,7 @@ class ProfileHandler(webapp2.RequestHandler):
                 else:
                     user=False
                     
-                self.render_page(player, stat_length, r_index, last_update_time,
+                self.render_page(player, page, stat_length, r_index, last_update_time,
                                  account=account, user=user)
             else:
                 self.redirect('/')
@@ -225,11 +330,13 @@ class ProfileHandler(webapp2.RequestHandler):
                 return
         
         
-    def render_page(self, player, stat_length, r_index, last_update_time=None, account=None, user=False):       
+    def render_page(self, player, page, stat_length, r_index, last_update_time=None, 
+                    account=None, user=False):       
         if account is not None:
             user_profile_url = account.profile_url
         else:
             user_profile_url = None
+
         
 #
 #   check that player.kd is not empty sequence!
@@ -239,6 +346,7 @@ class ProfileHandler(webapp2.RequestHandler):
         template_values = {
             'page_title': 'Profile',
             'player': player,
+            'page': page,
             'stat_length': stat_length,
             'logout_url': users.create_logout_url('/'),
             'user': user,
@@ -264,8 +372,6 @@ class LoginHandler(webapp2.RequestHandler):
                 self.render_page()
             else:
                 self.redirect('users/'+str(account.mc_account))
-#                self.render_page(msg="You've already linked an account!", render_form=False, account=account,
-#                                 user=True)
         else:
             self.redirect(users.create_login_url(self.request.uri))
 
@@ -291,7 +397,7 @@ class LoginHandler(webapp2.RequestHandler):
                             add_account(mc_account, str(user.nickname), p_url)
                             # add user
                             add_player(mc_account)
-                            self.render_page(msg="Successfully linked.", error=False, p_url=p_url)                     
+                            self.redirect('users/'+str(mc_account))                     
                     else:
                         self.redirect(users.create_login_url(self.request.uri))                  
             else:

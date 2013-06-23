@@ -21,24 +21,30 @@ import time
 import logging
 import random
 import urllib
+import json
 
 from google.appengine.ext import db
 from google.appengine.api import urlfetch_errors
 from google.appengine.api import memcache
 from google.appengine.api import runtime
 import pAProfileScraper as pap
+import numpy
 
-from models.models import Player, Graph, Commit
+from models.models import Player, Graph, Commit, RecentStats, ServerStats, Histogram
 from config import config
 import pageh
 from plot import Plot
+
 
 players_to_update = []
 
 class UpdateStatsHandler(webapp2.RequestHandler):
     """Updates all player's stats"""
+
+
     
-    def get(self):        
+    def get(self):
+        
         q = Player().all()
         if q != None:
             q = list(q)
@@ -57,12 +63,23 @@ class UpdateStatsHandler(webapp2.RequestHandler):
                 if p_stats == None:
                     continue
 
-                self.__update_player_stats(player, p_stats)
+                p = self.__update_player_stats(player, p_stats)
+
+                # update recent stats
+                RecentStats.get_or_insert(p.name,name=p.name,date=p.dates[-1],kills=p.kills[-1],
+                                          deaths=p.deaths[-1],cores=p.cores[-1],wools=p.wools[-1],
+                                          monuments=p.monuments[-1],objectives=p.objectives[-1],
+                                          kd=p.kd[-1],cd=p.cd[-1],wd=p.wd[-1],md=p.md[-1],od=p.od[-1],
+                                          rkd7=p.rkd7[-1],rcd7=p.rcd7[-1],rwd7=p.rwd7[-1],
+                                          rmd7=p.rmd7[-1],rod7=p.rod7[-1],rk7=p.rk7[-1],rd7=p.rd7[-1],
+                                          rc7=p.rc7[-1],rw7=p.rw7[-1],rm7=p.rm7[-1],ro7=p.ro7[-1])
                 
                 if runtime.is_shutting_down():
                     logging.info('backend runtime is shutting down.')
             
                 k = k + 1
+
+            self.__server_stats(players_to_update)
             
             db.put(players_to_update)
             
@@ -73,7 +90,7 @@ class UpdateStatsHandler(webapp2.RequestHandler):
             else:
                 logging.error('unable to flush memcache')
 
-    @db.transactional
+
     def __update_player_stats(self, player, p_stats):
         # update everyone's stats first
             
@@ -116,9 +133,9 @@ class UpdateStatsHandler(webapp2.RequestHandler):
             player = self.__update_rolling_stats(player, roll_index, div_deaths=False)
             
             players_to_update.append(player)
-                    
+
+            return player
     
-    @db.transactional
     def __update_rolling_stats(self, player, roll_index, div_deaths=True):  
         """updates a player's rolling stats
         
@@ -201,7 +218,91 @@ class UpdateStatsHandler(webapp2.RequestHandler):
                 index = None
         return index
 
-    
+    def __server_stats(self, players):
+
+        kills = []
+        deaths = []
+        cores = []
+        wools = []
+        monuments = []
+        kd = []
+
+        for p in players:
+            kills.append(p.kills[-1])
+            deaths.append(p.deaths[-1])
+            cores.append(p.cores[-1])
+            wools.append(p.wools[-1])
+            monuments.append(p.monuments[-1])
+            kd.append(p.kd[-1])
+
+        kills = numpy.array(kills)
+        deaths = numpy.array(deaths)
+        cores = numpy.array(cores)
+        wools = numpy.array(wools)
+        monuments = numpy.array(monuments)
+        kd = numpy.array(kd)
+
+        total_kills = int(kills.sum())
+        total_deaths = int(deaths.sum())
+        total_cores = int(cores.sum())
+        total_wools = int(wools.sum())
+        total_monuments = int(monuments.sum())
+
+        avg_kills = float(kills.mean())
+        avg_deaths = float(deaths.mean())
+        avg_cores = float(cores.mean())
+        avg_wools = float(wools.mean())
+        avg_monuments = float(monuments.mean())
+        avg_kd = float(kd.mean())
+
+        std_kills = float(kills.std())
+        std_deaths = float(deaths.std())
+        std_cores = float(cores.std())
+        std_wools = float(wools.std())
+        std_monuments = float(monuments.std())
+        std_kd = float(kd.std())
+
+
+        ServerStats(total_kills=total_kills,total_deaths=total_deaths,total_cores=total_cores,
+                   total_wools=total_wools,total_monuments=total_monuments,
+                   avg_kills=avg_kills,avg_deaths=avg_deaths,avg_cores=avg_cores,
+                   avg_wools=avg_wools,avg_monuments=avg_monuments,avg_kd=avg_kd,
+                   std_kills=std_kills,std_deaths=std_deaths,std_cores=std_cores,
+                   std_wools=std_wools,std_monuments=std_monuments,std_kd=std_kd).put()    
+
+        def make_hist(stat_list, bins=10):
+            """quick and dirty fxn for making histogram and  converting from numpy 
+               float 64 arrays to lists of regular floats"""
+            h_range = (min(stat_list) - 1, max(stat_list) + 1)
+            y,x = numpy.histogram(stat_list,bins=bins,range=h_range)
+            y,x = y.tolist(),x.tolist()
+            # convert all elements to float because GAE doesn't like numpy floats.
+            x = [ float(xi) for xi in x ]
+            y = [ float(yi) for yi in y ]
+            return x,y
+
+        num_bins = kd.size // 2
+
+        # make histograms
+        x,y = make_hist(kd, bins=num_bins)
+        Histogram(name='kd',x=x,y=y).put()
+
+        x,y = make_hist(kills, bins=num_bins)
+        Histogram(name='kills',x=x,y=y).put()
+
+        x,y = make_hist(deaths, bins=num_bins)
+        Histogram(name='deaths',x=x,y=y).put()
+
+        x,y = make_hist(wools, bins=num_bins)
+        Histogram(name='wools',x=x,y=y).put()
+
+        x,y = make_hist(cores, bins=num_bins)
+        Histogram(name='cores',x=x,y=y).put()
+
+        x,y = make_hist(monuments, bins=num_bins)
+        Histogram(name='monuments',x=x,y=y).put()
+        
+
 class UpdatePlotsHandler(webapp2.RequestHandler):
     """Updates all player's plots"""
 
@@ -212,7 +313,7 @@ class UpdatePlotsHandler(webapp2.RequestHandler):
 
             # only update 20 random player's graphs to conserve resources
             random.shuffle(q)
-            if len q > 20:
+            if len(q) > 20:
                 q = q[:20]
                         
             # now update everyone's graphs. done separately so a problem with a player's 
@@ -262,7 +363,7 @@ class UpdateCommits(webapp2.RequestHandler):
         
         html = page.read()
         page.close()
-        commits = eval(html)
+        commits = json.loads(html)
         
         for commit in commits:
             sha = commit['sha']

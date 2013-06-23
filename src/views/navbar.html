@@ -8,60 +8,36 @@
           </button>
           <a class="brand" href="/">wools++</a>
           <div class="nav-collapse collapse">
-            <p class="navbar-text pull-right">
-            {% if user %}
-              <a href="{{ user_profile_url }}" class="navbar-link">Profile</a>
-              <a href="{{ logout_url }}" class="navbar-link">Log Out</a>
-            {% else %}
-              <a href="/login" class="navbar-link">Log in</a>
-            {% endif %}
-            </p>
+            <ul class="nav pull-right">
+              {% if user %}  
+              <li class="dropdown">  
+                <a class="dropdown-toggle" data-toggle="dropdown">User<b class="caret"></b></a>  
+                <ul class="dropdown-menu"> 
+                  <li><a href="{{ user_profile_url }}">Profile</a></li>  
+                  <li><a href="{{logout_url}}">Log Out</a></li>
+                </ul>  
+              </li>
+              {% else %}
+               <li><a href="/login">Login</a></li> 
+              {% endif %}
+            </ul>
             <ul class="nav">
-            {% if page_title == 'Login' or page_title == 'Register' or page_title == 'Profile' or page_title == 'Users' %}	
-                <li class="dropdown active">  
-                  <a class="dropdown-toggle" data-toggle="dropdown">User<b class="caret"></b></a>  
-                  <ul class="dropdown-menu">
-                   {% if user %}   
-                      <li><a href="{{ user_profile_url }}">Profile</a></li>  
-                      <li><a href="{{logout_url}}">Log Out</a></li>
-                    {% else %}
-                      <li><a href="/login">Login</a></li> 
-                    {% endif %}
-                      <li><a href="/allusers">All Users</a></li>
-                  </ul>  
-                </li>
+            {% if page_title == 'All' %}	
+              <li class="active"><a href="/allusers">All</a></li>
+              <li><a href="/stats">Stats</a></li>
               <li><a href="/about">About</a></li>
-           
+            {% elif page_title == 'Stats' %}	
+              <li><a href="/allusers">All</a></li>
+              <li class="active"><a href="/stats">Stats</a></li>
+              <li><a href="/about">About</a></li>
             {% elif page_title == 'About' %}	
-                <li class="dropdown">  
-                  <a class="dropdown-toggle" data-toggle="dropdown">User<b class="caret"></b></a>  
-                  <ul class="dropdown-menu">
-                   {% if user %}   
-                      <li><a href="{{ user_profile_url }}">Profile</a></li>  
-                      <li><a href="{{logout_url}}">Log Out</a></li>
-                    {% else %}
-                      <li><a href="/login">Login</a></li>  
-                    {% endif %}
-                      <li><a href="/allusers">All Users</a></li>
-                  </ul>  
-                </li>
+              <li><a href="/allusers">All</a></li>
+              <li><a href="/stats">Stats</a></li>
               <li class="active"><a href="/about">About</a></li>
-
             {% else %}	
-                <li class="dropdown">  
-                  <a class="dropdown-toggle" data-toggle="dropdown">User<b class="caret"></b></a>  
-                  <ul class="dropdown-menu">
-                   {% if user %}   
-                      <li><a href="{{ user_profile_url }}">Profile</a></li>  
-                      <li><a href="{{logout_url}}">Log Out</a></li>
-                    {% else %}
-                      <li><a href="/login">Login</a></li> 
-                    {% endif %}
-                      <li><a href="/allusers">All Users</a></li>
-                  </ul>  
-                </li>
+              <li><a href="/allusers">All</a></li>
+              <li><a href="/stats">Stats</a></li>
               <li><a href="/about">About</a></li>
-
             {% endif %}
             </ul>
           </div><!--/.nav-collapse -->

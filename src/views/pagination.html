@@ -1,0 +1,21 @@
+<div class="pagination pagination-mini">
+<ul>
+{% if page == 1 %}
+<li class="disabled"><a href="">&laquo;</a></li>
+{% else %}
+<li><a href="{{ base_url }}?page={{ page - 1 }}&sort={{ sort }}">&laquo;</a></li>
+{% endif %}
+{% for i in range(count) %}
+{% if page == loop.index %}
+<li class="active"><a href="">{{ loop.index }}</a></li>
+{% else %}
+<li><a href="{{ base_url }}?page={{ loop.index }}&sort={{ sort }}">{{ loop.index }}</a></li>
+{% endif %}
+{% endfor %}
+{% if page < count %}
+<li><a href="{{ base_url }}?page={{ page + 1 }}&sort={{ sort }}">&raquo;</a></li>
+{% else %}
+<li class="disabled"><a href="">&raquo;</a></li>
+{% endif %}
+</ul>
+</div>

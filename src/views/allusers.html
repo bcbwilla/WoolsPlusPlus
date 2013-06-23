@@ -3,22 +3,42 @@
 	
 {% include 'header.html' %}
 
-      <div class="jumbotron"> 
-        <p class="lead">Who's using <strong>wools++</strong>?</p>
 
- 			<table class="table table-centered table-hover table-bordered">
- 			<thead>
- 			<th> Player </th>
-            <th> Joined </th>
- 			</thead>
- 			{% for p in p_name_date %}
-			<tr>	
-               <td><a href="/users/{{ p[0] }}"> {{ p[0] }} </a></td>
-               <td>{{ p[1] }}</td>
-			</tr>
-			{% endfor %}
-        </table>
-      </div>
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span10 offset1">
+          <p class="lead">Who's using <strong>wools++</strong>?</p>
+          Sorted by {{ sort }}.
+          <table class="table table-centered table-hover table-bordered">
+		    <thead>
+              <th></th>
+		      <th> Player </th>
+		      <th> <a href="/allusers?page={{ page }}&sort=kills">Kills</a> </th>
+              <th> <a href="/allusers?page={{ page }}&sort=deaths">Deaths</a> </th>
+		      <th> <a href="/allusers?page={{ page }}&sort=kd">KD</a> </th>
+              <th> <a href="/allusers?page={{ page }}&sort=wools">Wools</a> </th>
+		      <th> <a href="/allusers?page={{ page }}&sort=cores">Cores</a> </th>
+              <th> <a href="/allusers?page={{ page }}&sort=monuments">Monuments</a> </th>
+              <th> <a href="/allusers?page={{ page }}&sort=date">Joined</a> </th>
+		    </thead>
+		    {% for p in player_list %}
+	          <tr>	
+                 <td> {{ loop.index0 + p_per_page*(page-1) }}
+                 <td><a href="/users/{{ p.name }}"> {{ p.name }} </a></td>
+                 <td>{{ p.kills }}</td>
+                 <td>{{ p.deaths }}</td>
+                 <td>{{ p.kd | round(3) }}</td>
+                 <td>{{ p.wools }}</td>
+                 <td>{{ p.cores }}</td>
+                 <td>{{ p.monuments }}</td>
+                 <td>{{ p.date_str}}</td>
+	          </tr>
+	        {% endfor %}
+          </table>
+          {% include 'pagination.html' %}
+    </div><!--/span-->
+  </div><!--/row-->
+
 
 	{% include 'footer.html' %}
 

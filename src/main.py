@@ -31,6 +31,7 @@ app = webapp2.WSGIApplication([('/', pageh.MainPage),
                                ('/allusers',pageh.AllUsersHandler),
                                ('/about',pageh.AboutHandler),
                                ('/login',pageh.LoginHandler),
-                               ('/revisions',pageh.RevisionsHandler)
+                               ('/revisions',pageh.RevisionsHandler),
+                               ('/stats',pageh.StatsHandler)
                                ], debug=True)
 

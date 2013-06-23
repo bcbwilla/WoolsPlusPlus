@@ -6,24 +6,27 @@
     <div class="container-fluid">
       <div class="row-fluid">
         <div class="span8 offset2">
-          <div class="hero-unit">
-            <p><h3><strong>wools++</strong> provides players of the Overcast Network (OCN) with additional 
-        	gameplay statistics including objectives/deaths, rolling values and time series plots.</h3></p>
-            <p><a href="#" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
-          </div>
-          <div class="row-fluid">
-            <div class="span8 offset2">
-              <h2>Start collecting data today!</h2>
-              <p>Add yourself to the database to start collecting data!  A few times each day, <strong>wools++</strong>
+
+            <p><h2>Welcome to <strong>wools++</strong>!</h2></p>
+            <p><h4><strong>wools++</strong> provides players of the <a href="https://www.oc.tc">Overcast Network</a> (OCN) with additional 
+        	gameplay statistics including rolling values, objectives/deaths, time series plots, pie charts and server-wide comparative metastats.</h4></p>
+
+
+
+
+
+              <h3>Start collecting data today!</h3>
+              <p>Add yourself to the database to start collecting data!  A couple times each day, <strong>wools++</strong>
           	pulls data from your profile at <a href="https://www.oc.tc">OCN</a> and adds it to the database 
           	here.  It then calculates some statistics and makes some plots.</p>
             {% if user %}
                 <p><a class="btn" href="{{ user_profile_url }}">View stats &raquo;</a></p> 
             {% else %}
-                <p><a class="btn" href="/login">Register now! &raquo;</a></p>   	  
+                <p><a class="btn btn-success" href="/login">Go! &raquo;</a></p>   	  
           	{% endif %}
-            </div><!--/span-->
-          </div><!--/row-->
+
+
+
         </div><!--/span-->
       </div><!--/row-->
 

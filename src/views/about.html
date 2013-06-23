@@ -3,7 +3,9 @@
 	
 {% include 'header.html' %}
 
-	<div class="jumbotron" style="text-align: left">
+    <div class="container-fluid">
+        <div class="row-fluid">
+          <div class="span8 offset2">
 	
 
           <h4>About</h4>
@@ -32,7 +34,7 @@
           			up-to-the-second ones.  </dd>
           	</dl>
           	<dl>
-          		<dt>Why do I need a Google count to use wools++?</dt>
+          		<dt>Why do I need a Google account to use wools++?</dt>
           		<dd>This app is hosted on Google's App engine, which allows for easy integration with current Google
           			users.  This makes it easier for me, and more reliable for you!</dd>
           	</dl>          	
@@ -79,6 +81,9 @@
           			or (wools gotten in the past 7 days)/(deaths in the past 7 days)
           			</dd>
           	</dl>
+
+        </div><!--/span-->
+      </div><!--/row-->
 
 	{% include 'footer.html' %}
 

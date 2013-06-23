@@ -3,173 +3,352 @@
 
 {% include 'header.html' %}
 
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script> <!-- Google charts -->
+
     <div class="container-fluid">
+
       <div class="row-fluid">
         <div class="span3">
           <div class="well sidebar-nav">
             <ul class="nav nav-list">
-              <li class="nav-header">Stats</li>
-              <li class="active"><a href="#">Combat</a></li>
-              <li><a href="#">Objectives</a></li>
-              <li><a href="#">Rolling Stats</a></li>
+              <li class="nav-header">Stat Types</li>
+
+              {% if stat_length < 1 %}
+
+              <li>Combat</li>
+              <li>Objectives</li>
+              <li>Rolling Stats</li>
+              <li>Image Plots</li>
             </ul>
           </div><!--/.well -->
-        </div><!--/span-->
+         </div><!--/span-->
         <div class="span9">
           <div class="row-fluid">
-            <div class="span7 offset1">
-
-		        {% if stat_length < 1 %}
-         		<div class="alert alert-info">Looks like {{ player.name }} just joined!  There's no data for you to see yet.  Just wait a few hours for 
-         			wools++ to work its magic, and then you'll see some cool stuff here.  Check back later!
-         		</div>
-         		{% else %}		
-                <p class="lead"> {{ player.name }}: Status Report</p>
-
-	          <script type="text/javascript" src="http://www.google.com/jsapi"></script>
-
-	          {% if r_index != None %}
-
-
-	          <script type="text/javascript">
-	            google.load('visualization', '1', {packages: ['annotatedtimeline']});
-	            function drawVisualization() {
-	              var data = new google.visualization.DataTable();
-	              data.addColumn('date', 'Date');
-	              data.addColumn('number', 'KD');
-	              data.addRows([
-		        {% for val in player.rkd7 %}
-		            {% set d = player.dates[loop.index0] %}
-		            [new Date({{ d.year }}, {{ d.month-1 }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
-		             {{ player.kd[loop.index0] }}],
-		        {% endfor %}
-	              ]);
-	            
-	              var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
-		          document.getElementById('rkd_chart'));
-	              annotatedtimeline.draw(data, {'displayAnnotations': true, 'colors': ['#FF8C00','#0969A2','#00B358'],'min':{{ min_y }} });
-	            }
-
-	            google.setOnLoadCallback(drawVisualization);
-	          </script>
-	        <div id="rkd_chart" style="width: 100%; height: 300px;"></div>
-
-	        <br>	
-
-	          <script type="text/javascript">
-	            google.load('visualization', '1', {packages: ['annotatedtimeline']});
-	            function drawVisualization() {
-	              var data = new google.visualization.DataTable();
-	              data.addColumn('date', 'Date');
-	              data.addColumn('number', 'RKD7');
-	              data.addRows([
-		        {% for val in player.rkd7 %}
-		            {% set d = player.dates[loop.index0] %}
-		            [new Date({{ d.year }}, {{ d.month-1 }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
-		             {{ player.rkd7[loop.index0] }} ],
-		        {% endfor %}
-	              ]);
-	            
-	              var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
-		          document.getElementById('rolling_kd_chart'));
-	              annotatedtimeline.draw(data, {'displayAnnotations':true, 'colors':['#FF8C00','#0969A2','#00B358'], 'min':0});
-	            }
-	            
-	            google.setOnLoadCallback(drawVisualization);
-	          </script>
-	        <div id="rolling_kd_chart" style="width: 100%; height: 300px;"></div>
-
-	        <br>
-
-	          <script type="text/javascript">
-	            google.load('visualization', '1', {packages: ['annotatedtimeline']});
-	            function drawVisualization() {
-	              var data = new google.visualization.DataTable();
-	              data.addColumn('date', 'Date');
-	              data.addColumn('number', 'RW7');
-	              data.addColumn('number', 'RC7');
-	              data.addColumn('number', 'RM7');
-	              data.addRows([
-		        {% for val in player.rkd7 %}
-		            {% set d = player.dates[loop.index0] %}
-		            [new Date({{ d.year }}, {{ d.month-1 }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
-		             {{ player.rw7[loop.index0] }}, {{ player.rc7[loop.index0] }}, {{ player.rm7[loop.index0] }}],
-		        {% endfor %}
-	              ]);
-	            
-	              var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
-		          document.getElementById('rolling_objectives_chart'));
-	              annotatedtimeline.draw(data, {'displayAnnotations':true, 'colors':['#FF8C00','#0969A2','#00B358'], 'min':0});
-	            }
-	            
-	            google.setOnLoadCallback(drawVisualization);
-	          </script>
-	        <div id="rolling_objectives_chart" style="width: 100%; height: 300px;"></div>
-
-	        <br>
-
-	        {% else %}
-
-	          <script type="text/javascript">
-	            google.load('visualization', '1', {packages: ['annotatedtimeline']});
-	            function drawVisualization() {
-	              var data = new google.visualization.DataTable();
-	              data.addColumn('date', 'Date');
-	              data.addColumn('number', 'KD');
-	              data.addRows([
-		        {% for date in player.dates %}
-		            {% set d = player.dates[loop.index0] %}
-		            [new Date({{ d.year }}, {{ d.month-1 }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
-		             {{ player.kd[loop.index0] }}],
-		        {% endfor %}
-	              ]);
-	            
-	              var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
-		          document.getElementById('kd_chart'));
-	              annotatedtimeline.draw(data, {'displayAnnotations':true,'colors':['#FF8C00','#0969A2','#00B358'],'min':{{ min_y }} });
-	            }
-	            
-	            google.setOnLoadCallback(drawVisualization);
-	          </script>
-	        <div id="kd_chart" style="width: 100%; height: 300px;"></div>
-	        <br>
-	        {% endif %}
-
-	          <script type="text/javascript">
-	            google.load('visualization', '1', {packages: ['annotatedtimeline']});
-	            function drawVisualization() {
-	              var data = new google.visualization.DataTable();
-	              data.addColumn('date', 'Date');
-	              data.addColumn('number', 'Wools');
-	              data.addColumn('number', 'Cores');
-	              data.addColumn('number', 'Monuments');
-	              data.addRows([
-		        {% for date in player.dates %}
-		            {% set d = player.dates[loop.index0] %}
-		            [new Date({{ d.year }}, {{ d.month-1 }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
-		             {{ player.wools[loop.index0] }}, {{ player.cores[loop.index0] }}, {{ player.monuments[loop.index0] }}],
-		        {% endfor %}
-	              ]);
-	            
-	              var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
-		          document.getElementById('objectives_chart'));
-	              annotatedtimeline.draw(data, {'displayAnnotations': true, 'colors': ['#FF8C00','#0969A2','#00B358']});
-	            }
-	            
-	            google.setOnLoadCallback(drawVisualization);
-	          </script>
-	        <div id="objectives_chart" style="width: 100%; height: 300px;"></div>
-
- 		<div class="row">
- 	      <br>
- 		  <p class="lead">Stats last updated {{ last_update_time }}.</p>
-         </div>
-            {% endif %}
-
+            <div class="span9">
+              <br>
+              <div class="alert alert-info">Looks like {{ player.name }} just joined!  There's no data for you to see yet.  Just wait a few hours for wools++ to work its magic, and then you'll see some cool stuff here.  Check back later!
+              </div>
+            </div><!--/span-->
           </div><!--/row-->
+
+             {% elif page == 'combat' or page == '' %}
+
+              <li class="active"><a href="{{ player.name }}?page=combat">Combat</a></li>
+              <li><a href="{{ player.name }}?page=objectives">Objectives</a></li>
+              <li><a href="{{ player.name }}?page=rs">Rolling Stats</a></li>
+              <li><a href="{{ player.name }}?page=imgplots">Image Plots</a></li>
+            </ul>
+          </div><!--/.well -->
+         </div><!--/span-->
+        <div class="span9">
+          <div class="row-fluid">
+            <div class="span9">
+
+              <p class="lead"> {{ player.name }}: Combat Report</p>
+
+              <script type="text/javascript">
+                google.load('visualization', '1', {packages: ['corechart']});
+              </script>
+              <script type="text/javascript">
+                function drawVisualization() {
+                  // Create and populate the data table.
+                  var data = google.visualization.arrayToDataTable([
+                    ['Type', 'Total'],
+                    ['Kills', {{ player.kills[-1] }}],
+                    ['Deaths', {{ player.deaths[-1] }}]
+                  ]);
+                
+                  // Create and draw the visualization.
+                  new google.visualization.PieChart(document.getElementById('kd_pie')).
+                      draw(data, 
+                           {colors: ['#dd4814','#802c59','#00B358'],
+                            legend: {position: 'top', alignment: 'center'},
+                            chartArea: {top:50, left:50, height:'80%', width:'80%'},
+                            is3D: true});
+                }
+                
+                google.setOnLoadCallback(drawVisualization);
+              </script>
+
+              <div id="kd_pie" style="width: 100%; height: 300px;"></div>
+
+
+              <br>
+
+              <script type="text/javascript">
+                google.load('visualization', '1', {packages: ['corechart']});
+              </script>
+              <script type="text/javascript">
+                function drawVisualization() {
+                  var data = new google.visualization.DataTable();
+                  data.addColumn('date', 'Date');
+                  data.addColumn('number', 'KD');
+                  data.addRows([
+                {% for date in player.dates %}
+                    {% set d = player.dates[loop.index0] %}
+                    [new Date({{ d.year }}, {{ d.month-1 }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
+                     {{ player.kd[loop.index0] }}],
+                {% endfor %}
+                  ]);
+                
+                  // Create and draw the visualization.
+                  var ac = new google.visualization.AreaChart(document.getElementById('kd'));
+                  ac.draw(data, {
+                    isStacked: true,
+                    vAxis: {title: "KD"},
+                    hAxis: {title: "Date"},
+                    legend: {position: 'none'},
+                    colors: ['#802c59','#dd4814','#00B358']
+                  });
+                }
+                
+
+                google.setOnLoadCallback(drawVisualization);
+              </script>
+              <div id="kd" style="width: 100%; height: 400px;"></div>
+
+            </div><!--/span-->
+          </div><!--/row-->
+
+             {% elif page == 'objectives' %}
+
+              <li><a href="{{ player.name }}?page=combat">Combat</a></li>
+              <li class="active"><a href="{{ player.name }}?page=objectives">Objectives</a></li>
+              <li><a href="{{ player.name }}?page=rs">Rolling Stats</a></li>
+              <li><a href="{{ player.name }}?page=imgplots">Image Plots</a></li>
+            </ul>
+          </div><!--/.well -->
+         </div><!--/span-->
+        <div class="span9">
+          <div class="row-fluid">
+            <div class="span9">
+
+              <p class="lead"> {{ player.name }}: Objectives Report</p>
+
+              <script type="text/javascript">
+                google.load('visualization', '1', {packages: ['corechart']});
+              </script>
+              <script type="text/javascript">
+                function drawVisualization() {
+                  // Create and populate the data table.
+                  var data = google.visualization.arrayToDataTable([
+                    ['Objective', 'Total'],
+                    ['Wools', {{ player.wools[-1] }}],
+                    ['Cores', {{ player.cores[-1] }}],
+                    ['Monuments', {{ player.monuments[-1] }}]
+                  ]);
+                
+                  // Create and draw the visualization.
+                  new google.visualization.PieChart(document.getElementById('obs_pie')).
+                      draw(data, {colors: ['#802c59','#dd4814','#00B358'],
+                                  legend: {position: 'top', alignment: 'center'},
+                                  chartArea: {top:50, left:50, height:'80%', width:'80%'},
+                                  is3D: true});
+                }
+                
+
+                google.setOnLoadCallback(drawVisualization);
+              </script>
+
+              <div id="obs_pie" style="width: 100%; height: 300px;"></div>
+
+              <br>
+
+              <script type="text/javascript">
+                google.load('visualization', '1', {packages: ['corechart']});
+              </script>
+              <script type="text/javascript">
+                function drawVisualization() {
+                  var data = new google.visualization.DataTable();
+                  data.addColumn('date', 'Date');
+                  data.addColumn('number', 'Wools');
+                  data.addColumn('number', 'Cores');
+                  data.addColumn('number', 'Monuments');
+                  data.addRows([
+                {% for date in player.dates %}
+                    {% set d = player.dates[loop.index0] %}
+                    [new Date({{ d.year }}, {{ d.month-1 }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
+                     {{ player.wools[loop.index0] }}, {{ player.cores[loop.index0] }}, {{ player.monuments[loop.index0] }}],
+                {% endfor %}
+                  ]);
+                
+                  // Create and draw the visualization.
+                  var ac = new google.visualization.AreaChart(document.getElementById('wcm'));
+                  ac.draw(data, {
+                    isStacked: true,
+                    vAxis: {title: "Objectives"},
+                    hAxis: {title: "Date"},
+                    legend: {position: 'top'},
+                    colors: ['#802c59','#dd4814','#00B358']
+                  });
+                }
+                
+
+                google.setOnLoadCallback(drawVisualization);
+              </script>
+              <div id="wcm" style="width: 100%; height: 400px;"></div>
+
+              <br>
+
+              <script type="text/javascript">
+                google.load('visualization', '1', {packages: ['corechart']});
+              </script>
+              <script type="text/javascript">
+                function drawVisualization() {
+                var data = new google.visualization.DataTable();
+                data.addColumn('date', 'Date');
+                data.addColumn('number', 'WD');
+                data.addColumn('number', 'CD');
+                data.addColumn('number', 'MD');
+                data.addRows([
+              {% for date in player.dates %}
+                  {% set d = player.dates[loop.index0] %}
+                  [new Date({{ d.year }}, {{ d.month-1 }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
+                   {{ player.wd[loop.index0] }}, {{ player.cd[loop.index0] }}, {{ player.md[loop.index0] }}],
+              {% endfor %}
+                ]);
+                
+                  // Create and draw the visualization.
+                  var ac = new google.visualization.AreaChart(document.getElementById('wdcdmd'));
+                  ac.draw(data, {
+                    isStacked: true,
+                    vAxis: {title: "Objectives/Deaths"},
+                    hAxis: {title: "Date"},
+                    legend: {position: 'top'},
+                    colors: ['#802c59','#dd4814','#00B358']
+                  });
+                }
+                
+
+                google.setOnLoadCallback(drawVisualization);
+              </script>
+              <div id="wdcdmd" style="width: 100%; height: 400px;"></div>
+
+
+            </div><!--/span-->
+          </div><!--/row-->
+
+             {% elif page == 'rs' %}
+
+              <li><a href="{{ player.name }}?page=combat">Combat</a></li>
+              <li><a href="{{ player.name }}?page=objectives">Objectives</a></li>
+              <li class="active"><a href="{{ player.name }}?page=rs">Rolling Stats</a></li>
+              <li><a href="{{ player.name }}?page=imgplots">Image Plots</a></li>
+            </ul>
+          </div><!--/.well -->
+         </div><!--/span-->
+        <div class="span9">
+          <div class="row-fluid">
+            <div class="span9">
+
+               <p class="lead"> {{ player.name }}: Rolling Stats Report</p>
+
+              {% if r_index != None %}
+              <script type="text/javascript">
+                google.load('visualization', '1', {packages: ['corechart']});
+              </script>
+              <script type="text/javascript">
+                function drawVisualization() {
+                var data = new google.visualization.DataTable();
+                data.addColumn('date', 'Date');
+                data.addColumn('number', 'RKD7');
+                data.addRows([
+              {% for val in player.rkd7 %}
+                  {% set d = player.dates[loop.index0] %}
+                  [new Date({{ d.year }}, {{ d.month-1 }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
+                   {{ player.rkd7[loop.index0] }} ],
+              {% endfor %}
+                ]);
+                
+                  // Create and draw the visualization.
+                  var ac = new google.visualization.AreaChart(document.getElementById('rkd7'));
+                  ac.draw(data, {
+                    isStacked: true,
+                    vAxis: {title: "RKD7"},
+                    hAxis: {title: "Date"},
+                    legend: {position: 'top'},
+                    colors: ['#802c59','#dd4814','#00B358']
+                  });
+                }
+                
+
+                google.setOnLoadCallback(drawVisualization);
+              </script>
+              <div id="rkd7" style="width: 100%; height: 400px;"></div>
+
+              <br>
+
+              <script type="text/javascript">
+                google.load('visualization', '1', {packages: ['corechart']});
+              </script>
+              <script type="text/javascript">
+                function drawVisualization() {
+                var data = new google.visualization.DataTable();
+                data.addColumn('date', 'Date');
+                data.addColumn('number', 'RW7');
+                data.addColumn('number', 'RC7');
+                data.addColumn('number', 'RM7');
+                data.addRows([
+              {% for val in player.rkd7 %}
+                  {% set d = player.dates[loop.index0] %}
+                  [new Date({{ d.year }}, {{ d.month-1 }}, {{ d.day }}, {{ d.hour }}, {{ d.minute }}), 
+                   {{ player.rw7[loop.index0] }}, {{ player.rc7[loop.index0] }}, {{ player.rm7[loop.index0] }}],
+              {% endfor %}
+                ]);
+                
+                  // Create and draw the visualization.
+                  var ac = new google.visualization.AreaChart(document.getElementById('rwrcrm'));
+                  ac.draw(data, {
+                    isStacked: true,
+                    vAxis: {title: "Rolling Objectives"},
+                    hAxis: {title: "Date"},
+                    legend: {position: 'top'},
+                    colors: ['#802c59','#dd4814','#00B358']
+                  });
+                }
+                
+
+                google.setOnLoadCallback(drawVisualization);
+              </script>
+
+              <div id="rwrcrm" style="width: 100%; height: 400px;"></div>
+
+               {% else %}
+                <div class="alert alert-info">You don't have enough data for rolling stats yet! Check back later.</div>
+               {% endif %}
+
+            </div><!--/span-->
+          </div><!--/row-->
+
+
+             {% elif page == 'imgplots' %}
+
+              <li><a href="{{ player.name }}?page=combat">Combat</a></li>
+              <li><a href="{{ player.name }}?page=objectives">Objectives</a></li>
+              <li><a href="{{ player.name }}?page=rs">Rolling Stats</a></li>
+              <li class="active"><a href="{{ player.name }}?page=imgplots">Image Plots</a></li>
+            </ul>
+          </div><!--/.well -->
+         </div><!--/span-->
+        <div class="span9">
+          <div class="row-fluid">
+            <div class="span9">
+
+                <p class="lead"> {{ player.name }}: Plot Images</p>
+                Feel free to add these to your profile at oc.tc!
+
+                <img src="../image?filename={{ player.name }}_kd" width="100%"/>
+                <br>
+                <img src="../image?filename={{ player.name }}_rk7rd7rkd7" width="100%"/>
+                <br>
+                <img src="../image?filename={{ player.name }}_rw7rc7rkm7" width="100%"/>
+
+            </div><!--/span-->
+          </div><!--/row-->
+
+              {% endif %} 
         </div><!--/span-->
       </div><!--/row-->
-
 
 	{% include 'footer.html' %}
 
