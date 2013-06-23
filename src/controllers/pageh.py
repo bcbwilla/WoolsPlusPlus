@@ -132,10 +132,7 @@ class RevisionsHandler(webapp2.RequestHandler):
     """ renders the 'revisions' page """
 
     def get(self):
-
-        self.redirect('/')
-
-        """page = self.request.get('page')
+        page = self.request.get('page')
         if not page or page < 1:
             page = 1
         page = int(page)
@@ -155,11 +152,10 @@ class RevisionsHandler(webapp2.RequestHandler):
         commits_list = list(q.run(offset=offset,limit=REVISIONS_PER_PAGE))
 
         # convert commit date to relative date
-        for i in range(commits_list):
+        for i in range(len(commits_list)):
             commits_list[i].date_str = convert_time(commits_list[i].date)
 
-        self.render_page(commits_list, page, count, account=account, user=user)"""
-        pass
+        self.render_page(commits_list, page, count, account=account, user=user)
     
     def render_page(self, commits_list, page, count, account=None, user=False):     
         if account is not None:
@@ -215,10 +211,7 @@ class StatsHandler(webapp2.RequestHandler):
     """ render player profile """
     
     def get(self):  
-        self.redirect('/')
-       
-
-        """page = self.request.get('page')    
+        page = self.request.get('page')    
         account = get_user_account()
         if account is not None:
             user=True
@@ -262,8 +255,7 @@ class StatsHandler(webapp2.RequestHandler):
         q.order("-date")
         hists['monuments_hist'] = q.get()
             
-        self.render_page(page, s, hists, account=account, user=user)"""
-        pass
+        self.render_page(page, s, hists, account=account, user=user)
               
         
     def render_page(self, page, stats, hists, account=None, user=False):       

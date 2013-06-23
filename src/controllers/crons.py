@@ -270,11 +270,22 @@ class UpdateStatsHandler(webapp2.RequestHandler):
                    std_kills=std_kills,std_deaths=std_deaths,std_cores=std_cores,
                    std_wools=std_wools,std_monuments=std_monuments,std_kd=std_kd).put()    
 
-        def make_hist(stat_list, bins=10):
-            """quick and dirty fxn for making histogram and  converting from numpy 
-               float 64 arrays to lists of regular floats"""
-            h_range = (min(stat_list) - 1, max(stat_list) + 1)
-            y,x = numpy.histogram(stat_list,bins=bins,range=h_range)
+        def make_hist(stat_ary, bins=10, std=False):
+            """make histogram and convert from numpy 
+               float 64 arrays to lists of regular floats
+               
+                stat_ary MUST be a numpy array """
+
+            if not std:
+                h_range = (min(stat_ary) - 1, max(stat_ary) + 1)
+            else:
+                m = stat_ary.mean()
+                std_d = stat_ary.std()
+                h_range = (m-std_d*float(std), m+std_d*float(std))
+
+
+
+            y,x = numpy.histogram(stat_ary,bins=bins,range=h_range)
             y,x = y.tolist(),x.tolist()
             # convert all elements to float because GAE doesn't like numpy floats.
             x = [ float(xi) for xi in x ]
@@ -283,7 +294,7 @@ class UpdateStatsHandler(webapp2.RequestHandler):
 
         num_bins = kd.size // 2
 
-        # make histograms
+        # make histograms - all data
         x,y = make_hist(kd, bins=num_bins)
         Histogram(name='kd',x=x,y=y).put()
 
@@ -301,6 +312,25 @@ class UpdateStatsHandler(webapp2.RequestHandler):
 
         x,y = make_hist(monuments, bins=num_bins)
         Histogram(name='monuments',x=x,y=y).put()
+
+        # make histograms - only include data 1 std from mean
+        x,y = make_hist(kd, bins=num_bins, std=1)
+        Histogram(name='kd_1std',x=x,y=y).put()
+
+        x,y = make_hist(kills, bins=num_bins, std=1)
+        Histogram(name='kills_1std',x=x,y=y).put()
+
+        x,y = make_hist(deaths, bins=num_bins, std=1)
+        Histogram(name='deaths_1std',x=x,y=y).put()
+
+        x,y = make_hist(wools, bins=num_bins, std=1)
+        Histogram(name='wools_1std',x=x,y=y).put()
+
+        x,y = make_hist(cores, bins=num_bins, std=1)
+        Histogram(name='cores_1std',x=x,y=y).put()
+
+        x,y = make_hist(monuments, bins=num_bins, std=1)
+        Histogram(name='monuments_1std',x=x,y=y).put()
         
 
 class UpdatePlotsHandler(webapp2.RequestHandler):
@@ -319,9 +349,7 @@ class UpdatePlotsHandler(webapp2.RequestHandler):
             # now update everyone's graphs. done separately so a problem with a player's 
             # plots don't stop the rest of the players' stats from being updated.
             k = 0
-            while k < len(q) and not runtime.is_shutting_down():
-             
-#            for player in q:              
+            while k < len(q) and not runtime.is_shutting_down():             
                 player = q[k] 
                 # Make some graphs
                 pplot = Plot(player, stats=[('kd','KD')])

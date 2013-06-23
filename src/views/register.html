@@ -3,30 +3,31 @@
 
 {% include 'header.html' %}
 
-    <div class="row-fluid marketing">
-    <div class="span4 offset4">
-      {% if render_form %}
-      <h4>Link your account with one at oc.tc:</h4>
-      <br>
-      <fieldset>
-        <form method="post">
-          <div class="input-append">
-            <input class="span8 offset1" id="appendedInputButton" type="text" name="content" placeholder="Type a username">
-            <button class="btn" type="submit">Go!</button>
-          </div>
-          {% if msg != '' and error == True %}
-          <div class="alert alert-error">{{ msg }}</div>
-      	  {% elif msg != '' and error == False %}
-          <div class="alert alert-info">{{ msg }} View your user profile <a href="{{ p_url }}"><strong>here!</strong></a></div>
-      	  {% endif %}
-        </form>
-      </fieldset>
-      {% else %}
-      <div class="alert alert-info">{{ msg }}</div>
-      {% endif%}
-      <br>  	
-    </div>
-    </div>
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span4 offset4">
+          {% if render_form %}
+          <h4>Link your account with one at oc.tc:</h4>
+          <br>
+          <fieldset>
+            <form method="post">
+              <div class="input-append">
+                <input class="span8 offset1" id="appendedInputButton" type="text" name="content" placeholder="Type a username">
+                <button class="btn" type="submit">Go!</button>
+              </div>
+              {% if msg != '' and error == True %}
+              <div class="alert alert-error">{{ msg }}</div>
+          	  {% elif msg != '' and error == False %}
+              <div class="alert alert-info">{{ msg }} View your user profile <a href="{{ p_url }}"><strong>here!</strong></a></div>
+          	  {% endif %}
+            </form>
+          </fieldset>
+          {% else %}
+          <div class="alert alert-info">{{ msg }}</div>
+          {% endif%}
+          <br>  	
+        </div>
+      </div>
 
     {% include 'footer.html' %}
 
