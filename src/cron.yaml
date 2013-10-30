@@ -1,17 +1,17 @@
 cron:
-- description: Update user stats
-  url: /crons/updatestats
-  schedule: every 12 hours
-  target: updateplayers
-- description: Update commits for revisions page
-  url: /crons/updatecommits
-  schedule: every 24 hours
-  target: updateplayers
-- description: Update user plots
-  url: /crons/updateplots
-  schedule: every 24 hours
-  target: updateplayers
-- description: Biweekly backup
-  url: /_ah/datastore_admin/backup.create?kind=Player
-  schedule: every monday, thursday 00:00
-  target: ah-builtin-python-bundle
+#- description: Update user stats
+#  url: /crons/updatestats
+#  schedule: every 24 hours
+#  target: updateplayers
+#- description: Update commits for revisions page
+#  url: /crons/updatecommits
+#  schedule: every 24 hours
+#  target: updateplayers
+#- description: Update user plots
+#  url: /crons/updateplots
+#  schedule: every 24 hours
+#  target: updateplayers
+#- description: Biweekly backup
+#  url: /_ah/datastore_admin/backup.create?kind=Player
+#  schedule: every monday, thursday 00:00
+#  target: ah-builtin-python-bundle
