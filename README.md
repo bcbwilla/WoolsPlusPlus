@@ -1,9 +1,15 @@
-**wools++** provides Overcast Network (OC) players with additional gameplay statistics including objectives/deaths, 
+
+#### Note: This is the first web application I've ever made, and really the first "decently sized" project in python.
+#### Think back to the first real "thing" you made, and keep that in mind when browsing this project. :)
+#### I may clean up the code at some point, but it was mostly a "learning" project.
+--------------------------------------------------------------------
+
+**wools++** provides Overcast Network (OC) players with additional gameplay statistics including objectives/deaths,
 rolling values and time series plots.
 
-wools++ is a community-driven and fan-made project. The part that does stuff is written in python, and 
-it uses jinja2 with bootstrap html/css/javascript templates for displaying. wools++ uses BeautifulSoup 
-to collect data from users' profiles at Project Ares and matplotlib and Google Charts to produce the graphs. The project 
+wools++ is a community-driven and fan-made project. The part that does stuff is written in python, and
+it uses jinja2 with bootstrap html/css/javascript templates for displaying. wools++ uses BeautifulSoup
+to collect data from users' profiles at Project Ares and matplotlib and Google Charts to produce the graphs. The project
 is hosted on Google's App Engine.
 
 
